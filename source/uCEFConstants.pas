@@ -56,6 +56,11 @@ uses
   {$ENDIF}
 
 const
+  {$IFNDEF WINDOWS}
+  { CreateWindow  }
+  CW_USEDEFAULT = longint($80000000);  //vr
+  {$ENDIF}
+
   // /include/internal/cef_types.h (cef_errorcode_t)
   ERR_NONE                             = 0;
   ERR_FAILED                           = -2;

@@ -52,7 +52,7 @@ uses
   {$IFDEF DELPHI16_UP}
   {$IFDEF MSWINDOWS}WinApi.Windows,{$ENDIF}
   {$ELSE}
-  Windows,
+  {$IFDEF WINDOWS}Windows,{$ENDIF}//vr Windows,
   {$ENDIF}
   uCEFBaseRefCounted, uCEFInterfaces, uCEFTypes;
 

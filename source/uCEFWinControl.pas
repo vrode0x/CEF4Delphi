@@ -60,9 +60,13 @@ uses
   uCEFTypes, uCEFInterfaces;
 
 type
+
+  { TCEFWinControl }
+
   TCEFWinControl = class(TWinControl)
     protected
       function  GetChildWindowHandle : THandle; virtual;
+      procedure DoOnResize; override; //vr
       procedure Resize; override;
 
     public
@@ -100,7 +104,7 @@ uses
 function TCEFWinControl.GetChildWindowHandle : THandle;
 begin
   if not(csDesigning in ComponentState) and HandleAllocated then
-    Result := GetWindow(Handle, GW_CHILD)
+    Result := {$IFDEF WINDOWS}{//vr}GetWindow(Handle, GW_CHILD){$ELSE}0{$ENDIF}
    else
     Result := 0;
 end;
@@ -144,7 +148,10 @@ begin
   TempHWND := ChildWindowHandle;
   if (TempHWND = 0) then exit;
 
+  {$IFDEF WINDOWS}//vr
   {$IFDEF DELPHI16_UP}Winapi.{$ENDIF}Windows.GetClientRect(TempHWND, TempRect);
+  {$ELSE}
+  TempRect := GetClientRect;{$ENDIF}
   TempDC     := GetDC(TempHWND);
   TempWidth  := TempRect.Right  - TempRect.Left;
   TempHeight := TempRect.Bottom - TempRect.Top;
@@ -164,14 +171,24 @@ var
   TempHWND : HWND;
 begin
   TempHWND := ChildWindowHandle;
+  {$IFDEF WINDOWS}//vr
   Result   := (TempHWND <> 0) and DestroyWindow(TempHWND);
+  {$ELSE}
+  Result := False;//always TempHWND = 0;
+  {$ENDIF}
+end;
+
+procedure TCEFWinControl.DoOnResize; //vr >>>
+begin
+  inherited DoOnResize;
+  UpdateSize;
 end;
 
 procedure TCEFWinControl.Resize;
 begin
   inherited Resize;
 
-  UpdateSize;
+  //vr UpdateSize;
 end;
 
 end.

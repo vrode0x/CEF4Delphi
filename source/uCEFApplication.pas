@@ -54,6 +54,7 @@ uses
   {$ELSE}
     {$IFDEF MSWINDOWS}Windows, Forms,{$ENDIF} Classes, {$IFDEF FPC}dynlibs,{$ENDIF}
   {$ENDIF}
+  {$IFNDEF WINDOWS}{$IFDEF FPC}LazFileUtils,{$ENDIF}{$ENDIF}
   uCEFTypes, uCEFInterfaces, uCEFBaseRefCounted, uCEFSchemeRegistrar;
 
 const
@@ -1173,7 +1174,9 @@ begin
           TempNewDir := TempOldDir + '(' + inttostr(i) + ')';
         until not(DirectoryExists(TempNewDir));
 
-        if MoveFileW(PWideChar(TempOldDir + chr(0)), PWideChar(TempNewDir + chr(0))) then
+        {$IFDEF WINDOWS} //vr
+        if MoveFileW(PWideChar(TempOldDir + chr(0)), PWideChar(TempNewDir + chr(0))) then{$ELSE}
+        if RenameFile(TempOldDir, TempNewDir) then{$ENDIF}
           begin
             TempThread := TCEFDirectoryDeleterThread.Create(TempNewDir);
             {$IFDEF DELPHI14_UP}
@@ -1781,7 +1784,7 @@ begin
     begin
       FStatus    := asErrorLoadingLibrary;
       TempString := 'Error loading libcef.dll' + CRLF + CRLF +
-                    'Error code : 0x' + inttohex(GetLastError, 8);
+                    'Error code : 0x' + inttohex({$IFDEF MSWINDOWS}{//vr}GetLastError{$ELSE}GetLastOSError{$ENDIF}, 8);
 
       ShowErrorMessageDlg(TempString);
       exit;

@@ -54,6 +54,8 @@ uses
   {$ELSE}
     {$IFDEF MSWINDOWS}Windows, ActiveX,{$ENDIF} {$IFDEF DELPHI14_UP}IOUtils,{$ENDIF} Classes, SysUtils, Controls, Graphics, Math,
   {$ENDIF}
+  {$IFNDEF WINDOWS}{$IFDEF FPC}LCLIntf, LCLType,{$ENDIF}{$ENDIF}//vr
+  {$IFDEF FPC}LazFileUtils,{$ENDIF}//vr
   uCEFTypes, uCEFInterfaces, uCEFLibFunctions, uCEFResourceHandler,
   uCEFRegisterCDMCallback, uCEFConstants;
 
@@ -394,6 +396,16 @@ end;
 
 function CefTimeToSystemTime(const dt: TCefTime): TSystemTime;
 begin
+  {$IFDEF FPC} //vr >>>
+  Result.Year          := dt.year;
+  Result.Month         := dt.month;
+  Result.DayOfWeek     := dt.day_of_week;
+  Result.Day           := dt.day_of_month;
+  Result.Hour          := dt.hour;
+  Result.Minute        := dt.minute;
+  Result.Second        := dt.second;
+  Result.MilliSecond  := dt.millisecond;
+  {$ELSE}
   Result.wYear          := dt.year;
   Result.wMonth         := dt.month;
   Result.wDayOfWeek     := dt.day_of_week;
@@ -402,10 +414,21 @@ begin
   Result.wMinute        := dt.minute;
   Result.wSecond        := dt.second;
   Result.wMilliseconds  := dt.millisecond;
+  {$ENDIF}
 end;
 
 function SystemTimeToCefTime(const dt: TSystemTime): TCefTime;
 begin
+  {$IFDEF FPC} //vr >>>
+  Result.year         := dt.Year;
+  Result.month        := dt.Month;
+  Result.day_of_week  := dt.DayOfWeek;
+  Result.day_of_month := dt.Day;
+  Result.hour         := dt.Hour;
+  Result.minute       := dt.Minute;
+  Result.second       := dt.Second;
+  Result.millisecond  := dt.MilliSecond;
+  {$ELSE}
   Result.year         := dt.wYear;
   Result.month        := dt.wMonth;
   Result.day_of_week  := dt.wDayOfWeek;
@@ -414,6 +437,7 @@ begin
   Result.minute       := dt.wMinute;
   Result.second       := dt.wSecond;
   Result.millisecond  := dt.wMilliseconds;
+  {$ENDIF}
 end;
 
 function CefTimeToDateTime(const dt: TCefTime): TDateTime;
@@ -423,8 +447,8 @@ begin
   Result := 0;
 
   try
-    TempTime := CefTimeToSystemTime(dt);
-    SystemTimeToTzSpecificLocalTime(nil, @TempTime, @TempTime);
+    TempTime := CefTimeToSystemTime(dt);{$IFDEF MSWINDOWS}//vr
+    SystemTimeToTzSpecificLocalTime(nil, @TempTime, @TempTime);{$ENDIF}
     Result   := SystemTimeToDateTime(TempTime);
   except
     on e : exception do
@@ -439,8 +463,8 @@ begin
   FillChar(Result, SizeOf(TCefTime), 0);
 
   try
-    DateTimeToSystemTime(dt, TempTime);
-    TzSpecificLocalTimeToSystemTime(nil, @TempTime, @TempTime);
+    DateTimeToSystemTime(dt, TempTime);{$IFDEF MSWINDOWS}//vr
+    TzSpecificLocalTimeToSystemTime(nil, @TempTime, @TempTime);{$ENDIF}
     Result := SystemTimeToCefTime(TempTime);
   except
     on e : exception do
@@ -581,7 +605,7 @@ begin
   aWindowInfo.window                       := 0;
 end;
 
-procedure WindowInfoAsPopUp(var aWindowInfo : TCefWindowInfo; aParent : THandle);
+procedure WindowInfoAsPopUp(var aWindowInfo : TCefWindowInfo; aParent : TCefWindowHandle{//vr THandle});
 begin
   aWindowInfo.x                            := integer(CW_USEDEFAULT);
   aWindowInfo.y                            := integer(CW_USEDEFAULT);
@@ -592,7 +616,7 @@ begin
   aWindowInfo.window                       := 0;
 end;
 
-procedure WindowInfoAsWindowless(var aWindowInfo : TCefWindowInfo; aParent : THandle);
+procedure WindowInfoAsWindowless(var aWindowInfo : TCefWindowInfo; aParent : TCefWindowHandle{//vr THandle});
 begin
   aWindowInfo.x                            := 0;
   aWindowInfo.y                            := 0;
@@ -658,7 +682,7 @@ var
 begin
   if (GlobalCEFApp <> nil) and GlobalCEFApp.LibLoaded then
     begin
-      TempString := 'PID: ' + IntToStr(GetCurrentProcessID) + ', TID: ' + IntToStr(GetCurrentThreadID);
+      TempString := 'PID: ' + IntToStr({$IFDEF MSWINDOWS}GetCurrentProcessID{$ELSE}0{//vr}{$ENDIF}) + ', TID: ' + IntToStr(GetCurrentThreadID);
 
       case GlobalCEFApp.ProcessType of
         ptBrowser   : TempString := TempString + ', PT: Browser';
@@ -1037,6 +1061,7 @@ begin
 end;
 
 function GetExtendedFileVersion(const aFileName : string) : uint64;
+{$IFDEF MSWINDOWS}//vr
 var
   TempSize   : DWORD;
   TempBuffer : pointer;
@@ -1071,8 +1096,14 @@ begin
     if (TempBuffer <> nil) then FreeMem(TempBuffer);
   end;
 end;
+{$ELSE}
+begin
+  Result := 0;
+end;
+{$ENDIF}
 
 function GetStringFileInfo(const aFileName, aField : string; var aValue : string) : boolean;
+{$IFDEF MSWINDOWS}//vr
 type
   PLangAndCodepage = ^TLangAndCodepage;
   TLangAndCodepage = record
@@ -1161,7 +1192,12 @@ begin
     if (TempBuffer <> nil) then FreeMem(TempBuffer);
   end;
 end;
-
+{$ELSE}
+begin
+  Result := False;
+  aValue := '';
+end;
+{$ENDIF}
 function GetDLLVersion(const aDLLFile : string; var aVersionInfo : TFileVersionInfo) : boolean;
 var
   TempVersion : uint64;
@@ -1203,6 +1239,7 @@ end;
 // This function is based on the answer given by 'Alex' in StackOverflow
 // https://stackoverflow.com/questions/2748474/how-to-determine-if-dll-file-was-compiled-as-x64-or-x86-bit-using-either-delphi
 function GetDLLHeaderMachine(const aDLLFile : string; var aMachine : integer) : boolean;
+{$IFDEF MSWINDOWS}//vr
 var
   TempHeader         : TImageDosHeader;
   TempImageNtHeaders : TImageNtHeaders;
@@ -1241,6 +1278,12 @@ begin
     if (TempStream <> nil) then FreeAndNil(TempStream);
   end;
 end;
+{$ELSE}
+begin
+  Result := False;
+  aMachine := 0;
+end;
+{$ENDIF}
 
 function Is32BitProcess : boolean;
 {$IFDEF MSWINDOWS}
@@ -1327,10 +1370,14 @@ end;
 
 function CustomPathIsRelative(const aPath : string) : boolean;
 begin
+  {$IFDEF FPC}//vr
+  Result := not FilenameIsAbsolute(aPath);
+  {$ELSE}
   {$IFDEF DELPHI12_UP}
   Result := PathIsRelativeUnicode(PChar(aPath));
   {$ELSE}
   Result := PathIsRelativeAnsi(PChar(aPath));
+  {$ENDIF}
   {$ENDIF}
 end;
 
@@ -1783,6 +1830,14 @@ begin
   end;
 end;
 
+{$IFNDEF MSWINDOWS}//vr
+const
+  DROPEFFECT_NONE   = 0;
+  DROPEFFECT_COPY   = 1;
+  DROPEFFECT_MOVE   = 2;
+  DROPEFFECT_LINK   = 4;
+  DROPEFFECT_SCROLL = dword($80000000);
+{$ENDIF}
 procedure DropEffectToDragOperation(aEffect: Longint; var aAllowedOps : TCefDragOperations);
 begin
   aAllowedOps := DRAG_OPERATION_NONE;
