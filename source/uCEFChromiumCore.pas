@@ -117,6 +117,8 @@ type
       FHTTPSUpgrade             : TCefState;
       FHSTSPolicyBypassList     : ustring;
       FCredentialsService       : TCefState;
+      FAutofillCreditCard       : TCefState;
+      FAutofillProfile          : TCefState;
       FTryingToCloseBrowser     : boolean;
 
       {$IFDEF LINUX}
@@ -125,13 +127,10 @@ type
 
       {$IFDEF MSWINDOWS}
       FOldBrowserCompWndPrc   : TFNWndProc;
-      FOldWidgetCompWndPrc    : TFNWndProc;
       FOldRenderCompWndPrc    : TFNWndProc;
       FBrowserCompStub        : Pointer;
-      FWidgetCompStub         : Pointer;
       FRenderCompStub         : Pointer;
       FBrowserCompHWND        : THandle;
-      FWidgetCompHWND         : THandle;
       FRenderCompHWND         : THandle;
       {$ENDIF}
 
@@ -188,6 +187,7 @@ type
 
       // ICefLifeSpanHandler
       FOnBeforePopup                  : TOnBeforePopup;
+      FOnBeforePopupAborted           : TOnBeforePopupAborted;
       FOnBeforeDevToolsPopup          : TOnBeforeDevToolsPopup;
       FOnAfterCreated                 : TOnAfterCreated;
       FOnBeforeClose                  : TOnBeforeClose;
@@ -285,6 +285,7 @@ type
 
       // ICefFrameHandler
       FOnFrameCreated                     : TOnFrameCreated;
+      FOnFrameDestroyed                   : TOnFrameDestroyed;
       FOnFrameAttached                    : TOnFrameAttached;
       FOnFrameDetached                    : TOnFrameDetached;
       FOnMainFrameChanged                 : TOnMainFrameChanged;
@@ -325,7 +326,6 @@ type
       FOnCanFocus                         : TNotifyEvent;
       {$IFDEF MSWINDOWS}
       FOnBrowserCompMsg                   : TOnCompMsgEvent;
-      FOnWidgetCompMsg                    : TOnCompMsgEvent;
       FOnRenderCompMsg                    : TOnCompMsgEvent;
       {$ENDIF}
 
@@ -349,6 +349,7 @@ type
       function  GetIsPopUp : boolean;
       function  GetWindowHandle : TCefWindowHandle;
       function  GetOpenerWindowHandle : TCefWindowHandle;
+      function  GetOpenerIdentifier: Integer;
       function  GetWindowlessFrameRate : integer;
       function  GetFrameIsFocused : boolean;
       function  GetInitialized : boolean;
@@ -490,7 +491,6 @@ type
       procedure RestoreCompWndProc(var aOldWnd: THandle; aNewWnd: THandle; var aProc: TFNWndProc);
       procedure CallOldCompWndProc(aProc: TFNWndProc; aWnd: THandle; var aMessage: TMessage);
       procedure BrowserCompWndProc(var aMessage: TMessage);
-      procedure WidgetCompWndProc(var aMessage: TMessage);
       procedure RenderCompWndProc(var aMessage: TMessage);
       procedure RestoreOldCompWndProc;
       function  CopyDCToBitmapStream(aSrcDC : HDC; const aSrcRect : TRect; const aStream : TStream) : boolean;
@@ -553,7 +553,8 @@ type
       procedure doOnDialogClosed(const browser: ICefBrowser); virtual;
 
       // ICefLifeSpanHandler
-      function  doOnBeforePopup(const browser: ICefBrowser; const frame: ICefFrame; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean): Boolean; virtual;
+      function  doOnBeforePopup(const browser: ICefBrowser; const frame: ICefFrame; popup_id: Integer; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean): Boolean; virtual;
+      procedure doOnBeforePopupAborted(const browser: ICefBrowser; popup_id: Integer); virtual;
       procedure doOnBeforeDevToolsPopup(const browser: ICefBrowser; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var use_default_window: boolean); virtual;
       procedure doOnAfterCreated(const browser: ICefBrowser); virtual;
       procedure doOnBeforeClose(const browser: ICefBrowser); virtual;
@@ -648,6 +649,7 @@ type
 
       // ICefFrameHandler
       procedure doOnFrameCreated(const browser: ICefBrowser; const frame: ICefFrame);
+      procedure doOnFrameDestroyed(const browser: ICefBrowser; const frame: ICefFrame);
       procedure doOnFrameAttached(const browser: ICefBrowser; const frame: ICefFrame; reattached: boolean);
       procedure doOnFrameDetached(const browser: ICefBrowser; const frame: ICefFrame);
       procedure doOnMainFrameChanged(const browser: ICefBrowser; const old_frame, new_frame: ICefFrame);
@@ -736,14 +738,26 @@ type
       /// </summary>
       function    CreateClientHandler(var aClient : ICefClient; aIsOSR : boolean = True) : boolean; overload;
       /// <summary>
-      /// Request that the browser close. The JavaScript 'onbeforeunload' event will
-      /// be fired. If |aForceClose| is false (0) the event handler, if any, will be
-      /// allowed to prompt the user and the user can optionally cancel the close.
-      /// If |aForceClose| is true (1) the prompt will not be displayed and the
-      /// close will proceed. Results in a call to
-      /// ICefLifeSpanHandler.DoClose() if the event handler allows the close
-      /// or if |aForceClose| is true (1). See ICefLifeSpanHandler.DoClose()
-      /// documentation for additional usage information.
+      /// <para>Request that the browser close. Closing a browser is a multi-stage process
+      /// that may complete either synchronously or asynchronously, and involves
+      /// events such as TChromiumCore.OnClose (Alloy style only),
+      /// TChromiumCore.OnBeforeClose, and a top-level window close
+      /// handler such as TCEFWindowComponent.OnCanClose (or platform-specific
+      /// equivalent). In some cases a close request may be delayed or canceled by
+      /// the user. Using TryCloseBrowser() instead of CloseBrowser() is
+      /// recommended for most use cases. See TChromiumCore.OnClose
+      /// documentation for detailed usage and examples.</para>
+      ///
+      /// <para>If |aForceClose| is false (0) then JavaScript unload handlers, if any, may
+      /// be fired and the close may be delayed or canceled by the user. If
+      /// |aForceClose| is true (1) then the user will not be prompted and the close
+      /// will proceed immediately (possibly asynchronously). If browser close is
+      /// delayed and not canceled the default behavior is to call the top-level
+      /// window close handler once the browser is ready to be closed. This default
+      /// behavior can be changed for Alloy style browsers by implementing
+      /// TChromiumCore.OnClose. IsReadyToBeClosed() can be used
+      /// to detect mandatory browser close events when customizing close behavior
+      /// on the browser process UI thread.</para>
       /// </summary>
       procedure   CloseBrowser(aForceClose : boolean);
       /// <summary>
@@ -751,15 +765,35 @@ type
       /// </summary>
       procedure   CloseAllBrowsers;
       /// <summary>
-      /// Helper for closing a browser. Call this function from the top-level window
-      /// close handler (if any). Internally this calls CloseBrowser(false (0)) if
-      /// the close has not yet been initiated. This function returns false (0)
-      /// while the close is pending and true (1) after the close has completed. See
-      /// CloseBrowser() and ICefLifeSpanHandler.DoClose() documentation for
-      /// additional usage information. This function must be called on the browser
-      /// process UI thread.
+      /// Helper for closing a browser. This is similar in behavior to
+      /// CLoseBrowser(false) but returns a boolean to reflect the immediate
+      /// close status. Call this function from a top-level window close handler
+      /// such as TCEFWindowComponent.OnCanClose (or platform-specific equivalent)
+      /// to request that the browser close, and return the result to indicate if
+      /// the window close should proceed. Returns false (0) if the close will be
+      /// delayed (JavaScript unload handlers triggered but still pending) or true
+      /// (1) if the close will proceed immediately (possibly asynchronously). See
+      /// CloseBrowser() documentation for additional usage information. This
+      /// function must be called on the browser process UI thread.
       /// </summary>
       function    TryCloseBrowser : boolean;
+      /// <summary>
+      /// Returns true (1) if the browser is ready to be closed, meaning that the
+      /// close has already been initiated and that JavaScript unload handlers have
+      /// already executed or should be ignored. This can be used from a top-level
+      /// window close handler such as TCEFWindowComponent.OnCanClose (or platform-
+      /// specific equivalent) to distringuish between potentially cancelable
+      /// browser close events (like the user clicking the top-level window close
+      /// button before browser close has started) and mandatory browser close
+      /// events (like JavaScript `window.close()` or after browser close has
+      /// started in response to [Try]CloseBrowser()). Not completing the browser
+      /// close for mandatory close events (when this function returns true (1))
+      /// will leave the browser in a partially closed state that interferes with
+      /// proper functioning. See CloseBrowser() documentation for additional usage
+      /// information. This function must be called on the browser process UI
+      /// thread.
+      /// </summary>
+      function    IsReadyToBeClosed : boolean;
       /// <summary>
       /// Select the browser with the aID identifier when TChromiumCore uses the
       /// multi-browser mode.
@@ -1218,6 +1252,10 @@ type
       /// </summary>
       procedure   ClipboardPaste;
       /// <summary>
+      /// Execute paste and match style on the focused frame.
+      /// </summary>
+      procedure  ClipboardPasteAndMatchStyle;
+      /// <summary>
       /// Execute cut on the focused frame.
       /// </summary>
       procedure   ClipboardCut;
@@ -1333,9 +1371,11 @@ type
       /// </summary>
       procedure ExitFullscreen(will_cause_resize: boolean);
       /// <summary>
-      /// Returns true (1) if a Chrome command is supported and enabled. Values for
-      /// |command_id| can be found in the cef_command_ids.h file. This function can
-      /// only be called on the UI thread. Only used with Chrome style.
+      /// Returns true (1) if a Chrome command is supported and enabled. Use the
+      /// cef_id_for_command_id_name() function for version-safe mapping of command
+      /// IDC names from cef_command_ids.h to version-specific numerical
+      /// |command_id| values. This function can only be called on the UI thread.
+      /// Only used with Chrome style.
       /// </summary>
       /// <remarks>
       /// <para><see cref="uCEFConstants">See the IDC_* constants in uCEFConstants.pas for all the |command_id| values.</see></para>
@@ -1343,9 +1383,11 @@ type
       /// </remarks>
       function CanExecuteChromeCommand(command_id: integer): boolean;
       /// <summary>
-      /// Execute a Chrome command. Values for |command_id| can be found in the
-      /// cef_command_ids.h file. |disposition| provides information about the
-      /// intended command target. Only used with Chrome style.
+      /// Returns true (1) if a Chrome command is supported and enabled. Use the
+      /// cef_id_for_command_id_name() function for version-safe mapping of command
+      /// IDC names from cef_command_ids.h to version-specific numerical
+      /// |command_id| values. This function can only be called on the UI thread.
+      /// Only used with Chrome style.
       /// </summary>
       /// <remarks>
       /// <para><see cref="uCEFConstants">See the IDC_* constants in uCEFConstants.pas for all the |command_id| values.</see></para>
@@ -1816,15 +1858,16 @@ type
       /// Calls ICefBrowserHost.GetOpenerWindowHandle and returns the window handle of the browser that opened this browser.
       /// </summary>
       property  OpenerWindowHandle            : TCefWindowHandle             read GetOpenerWindowHandle;
+      /// <summary>
+      /// Retrieve the unique identifier of the browser that opened this browser.
+      /// Will return 0 for non-popup browsers.
+      /// </summary>
+      property  OpenerIdentifier              : Integer                      read GetOpenerIdentifier;
       {$IFDEF MSWINDOWS}
       /// <summary>
       /// Handle of one to the child controls created automatically by CEF to show the web contents.
       /// </summary>
       property  BrowserHandle                 : THandle                      read FBrowserCompHWND;
-      /// <summary>
-      /// Handle of one to the child controls created automatically by CEF to show the web contents.
-      /// </summary>
-      property  WidgetHandle                  : THandle                      read FWidgetCompHWND;
       /// <summary>
       /// Handle of one to the child controls created automatically by CEF to show the web contents.
       /// </summary>
@@ -2112,6 +2155,20 @@ type
       /// This service shows a dialog to save the usernames and passwords in Chrome style.
       /// </summary>
       property CredentialsService             : TCefState                    read FCredentialsService          write FCredentialsService;
+      /// <summary>
+      /// Browser preference used to enable the autofill feature for credit card information.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property AutofillCreditCard             : TCefState                    read FAutofillCreditCard          write FAutofillCreditCard;
+      /// <summary>
+      /// Browser preference used to enable the autofill feature for profile information.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property AutofillProfile                : TCefState                    read FAutofillProfile             write FAutofillProfile;
 
     published
       /// <summary>
@@ -2199,10 +2256,6 @@ type
       /// Triggered for all messages sent to the child controls created by CEF to show the web contents.
       /// </summary>
       property  OnBrowserCompMsg                   : TOnCompMsgEvent                          read FOnBrowserCompMsg                   write FOnBrowserCompMsg;
-      /// <summary>
-      /// Triggered for all messages sent to the child controls created by CEF to show the web contents.
-      /// </summary>
-      property  OnWidgetCompMsg                    : TOnCompMsgEvent                          read FOnWidgetCompMsg                    write FOnWidgetCompMsg;
       /// <summary>
       /// Triggered for all messages sent to the child controls created by CEF to show the web contents.
       /// </summary>
@@ -2613,35 +2666,61 @@ type
       /// </remarks>
       property OnDialogClosed                   : TOnDialogClosed                   read FOnDialogClosed                   write FOnDialogClosed;
       /// <summary>
-      /// Called on the CEF UI thread before a new popup browser is created. The
-      /// |browser| and |frame| values represent the source of the popup request.
-      /// The |target_url| and |target_frame_name| values indicate where the popup
-      /// browser should navigate and may be NULL if not specified with the request.
-      /// The |target_disposition| value indicates where the user intended to open
-      /// the popup (e.g. current tab, new tab, etc). The |user_gesture| value will
-      /// be true (1) if the popup was opened via explicit user gesture (e.g.
-      /// clicking a link) or false (0) if the popup opened automatically (e.g. via
-      /// the DomContentLoaded event). The |popupFeatures| structure contains
-      /// additional information about the requested popup window. To allow creation
-      /// of the popup browser optionally modify |windowInfo|, |client|, |settings|
-      /// and |no_javascript_access| and return false (0). To cancel creation of the
+      /// <para>Called on the UI thread before a new popup browser is created. The
+      /// |browser| and |frame| values represent the source of the popup request
+      /// (opener browser and frame). The |popup_id| value uniquely identifies the
+      /// popup in the context of the opener browser. The |target_url| and
+      /// |target_frame_name| values indicate where the popup browser should
+      /// navigate and may be NULL if not specified with the request. The
+      /// |target_disposition| value indicates where the user intended to open the
+      /// popup (e.g. current tab, new tab, etc). The |user_gesture| value will be
+      /// true (1) if the popup was opened via explicit user gesture (e.g. clicking
+      /// a link) or false (0) if the popup opened automatically (e.g. via the
+      /// DomContentLoaded event). The |popupFeatures| structure contains additional
+      /// information about the requested popup window. To allow creation of the
+      /// popup browser optionally modify |windowInfo|, |client|, |settings| and
+      /// |no_javascript_access| and return false (0). To cancel creation of the
       /// popup browser return true (1). The |client| and |settings| values will
       /// default to the source browser's values. If the |no_javascript_access|
       /// value is set to false (0) the new browser will not be scriptable and may
       /// not be hosted in the same renderer process as the source browser. Any
       /// modifications to |windowInfo| will be ignored if the parent browser is
-      /// wrapped in a ICefBrowserView. Popup browser creation will be canceled
-      /// if the parent browser is destroyed before the popup browser creation
-      /// completes (indicated by a call to OnAfterCreated for the popup browser).
-      /// The |extra_info| parameter provides an opportunity to specify extra
-      /// information specific to the created popup browser that will be passed to
-      /// ICefRenderProcessHandler.OnBrowserCreated in the render process.
+      /// wrapped in a ICefBrowserView. The |extra_info| parameter provides an
+      /// opportunity to specify extra information specific to the created popup
+      /// browser that will be passed to GlobalCEFApp.OnBrowserCreated in the render
+      /// process.</para>
+      ///
+      /// <para>If popup browser creation succeeds then OnAfterCreated will be called for
+      /// the new popup browser. If popup browser creation fails, and if the opener
+      /// browser has not yet been destroyed, then OnBeforePopupAborted will be
+      /// called for the opener browser. See OnBeforePopupAborted documentation for
+      /// additional details.</para>
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
       /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_life_span_handler_capi.h">CEF source file: /include/capi/cef_life_span_handler_capi.h (cef_life_span_handler_t)</see></para>
       /// </remarks>
       property OnBeforePopup                    : TOnBeforePopup                    read FOnBeforePopup                    write FOnBeforePopup;
+      /// <summary>
+      /// <para>Called on the CEF UI thread if a new popup browser is aborted. This only
+      /// occurs if the popup is allowed in OnBeforePopup and creation fails before
+      /// OnAfterCreated is called for the new popup browser. The |browser| value is
+      /// the source of the popup request (opener browser). The |popup_id| value
+      /// uniquely identifies the popup in the context of the opener browser, and is
+      /// the same value that was passed to OnBeforePopup.</para>
+      ///
+      /// <para>Any client state associated with pending popups should be cleared in
+      /// OnBeforePopupAborted, OnAfterCreated of the popup browser, or
+      /// OnBeforeClose of the opener browser. OnBeforeClose of the opener browser
+      /// may be called before this function in cases where the opener is closing
+      /// during popup creation, in which case ICefBrowser.IsValid will
+      /// return false (0) in this function.</para>
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_life_span_handler_capi.h">CEF source file: /include/capi/cef_life_span_handler_capi.h (cef_life_span_handler_t)</see></para>
+      /// </remarks>
+      property OnBeforePopupAborted             : TOnBeforePopupAborted             read FOnBeforePopupAborted             write FOnBeforePopupAborted;
       /// <summary>
       /// <para>Called on the CEF UI thread before a new DevTools popup browser is created.
       /// The |browser| value represents the source of the popup request. Optionally
@@ -2651,7 +2730,7 @@ type
       /// parent browser is Views-hosted (wrapped in a ICefBrowserView).</para>
       /// <para>The |extra_info| parameter provides an opportunity to specify extra
       /// information specific to the created popup browser that will be passed to
-      /// ICefRenderProcessHandler.OnBrowserCreated() in the render process.
+      /// GlobalCEFApp.OnBrowserCreated in the render process.
       /// The existing |extra_info| object, if any, will be read-only but may be
       /// replaced with a new object.</para>
       /// <para>Views-hosted source browsers will create Views-hosted DevTools popups
@@ -2680,12 +2759,13 @@ type
       /// browser object and do not attempt to execute any functions on the browser
       /// object (other than IsValid, GetIdentifier or IsSame) after this callback
       /// returns. ICefFrameHandler callbacks related to final main frame
-      /// destruction will arrive after this callback and ICefBrowser.IsValid
-      /// will return false (0) at that time. Any in-progress network requests
-      /// associated with |browser| will be aborted when the browser is destroyed,
-      /// and ICefResourceRequestHandler callbacks related to those requests may
+      /// destruction, and OnBeforePopupAborted callbacks for any pending popups,
+      /// will arrive after this callback and ICefBrowser.IsValid will return
+      /// false (0) at that time. Any in-progress network requests associated with
+      /// |browser| will be aborted when the browser is destroyed, and
+      /// ICefResourceRequestHandler callbacks related to those requests may
       /// still arrive on the IO thread after this callback. See ICefFrameHandler
-      /// and OnClose() documentation for additional usage information.
+      /// and DoClose() documentation for additional usage information.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -2693,69 +2773,84 @@ type
       /// </remarks>
       property OnBeforeClose                    : TOnBeforeClose                    read FOnBeforeClose                    write FOnBeforeClose;
       /// <summary>
-      /// <para>Called when a browser has recieved a request to close. This may result
-      /// directly from a call to ICefBrowserHost.*CloseBrowser or indirectly
-      /// if the browser is parented to a top-level window created by CEF and the
-      /// user attempts to close that window (by clicking the 'X', for example). The
-      /// OnClose function will be called after the JavaScript 'onunload' event
-      /// has been fired.</para>
+      /// <para>Called when an Alloy style browser is ready to be closed, meaning that the
+      /// close has already been initiated and that JavaScript unload handlers have
+      /// already executed or should be ignored. This may result directly from a
+      /// call to TChromiumCore.[Try]CloseBrowser() or indirectly if the
+      /// browser's top-level parent window was created by CEF and the user attempts
+      /// to close that window (by clicking the 'X', for example). TChromiumCore.OnClose will
+      /// not be called if the browser's host window/view has already been destroyed
+      /// (via parent window/view hierarchy tear-down, for example), as it is no
+      /// longer possible to customize the close behavior at that point.</para>
       ///
-      /// <para>An application should handle top-level owner window close notifications by
-      /// calling ICefBrowserHost.TryCloseBrowser or
-      /// ICefBrowserHost.CloseBrowser(false) instead of allowing the window
+      /// <para>An application should handle top-level parent window close notifications
+      /// by calling TChromiumCore.TryCloseBrowser() or
+      /// TChromiumCore.CloseBrowser(false) instead of allowing the window
       /// to close immediately (see the examples below). This gives CEF an
-      /// opportunity to process the 'onbeforeunload' event and optionally cancel
-      /// the close before OnClose is called.</para>
+      /// opportunity to process JavaScript unload handlers and optionally cancel
+      /// the close before TChromiumCore.OnClose is called.</para>
       ///
-      /// <para>When windowed rendering is enabled CEF will internally create a window or
-      /// view to host the browser. In that case returning false (0) from OnClose()
-      /// will send the standard close notification to the browser's top-level owner
-      /// window (e.g. WM_CLOSE on Windows, performClose: on OS X, "delete_event" on
-      /// Linux or ICefWindowDelegate.CanClose callback from Views). If the
-      /// browser's host window/view has already been destroyed (via view hierarchy
-      /// tear-down, for example) then OnClose() will not be called for that
-      /// browser since is no longer possible to cancel the close.</para>
+      /// <para>When windowed rendering is enabled CEF will create an internal child
+      /// window/view to host the browser. In that case returning false (0) from
+      /// TChromiumCore.OnClose will send the standard close notification to the browser's top-
+      /// level parent window (e.g. WM_CLOSE on Windows, performClose: on OS X,
+      /// "delete_event" on Linux or TCEFWindowComponent.OnCanClose callback
+      /// from Views).</para>
       ///
-      /// <para>When windowed rendering is disabled returning false (0) from OnClose()
-      /// will cause the browser object to be destroyed immediately.</para>
+      /// <para>When windowed rendering is disabled there is no internal window/view and
+      /// returning false (0) from TChromiumCore.OnClose will cause the browser object to be
+      /// destroyed immediately.</para>
       ///
-      /// <para>If the browser's top-level owner window requires a non-standard close
-      /// notification then send that notification from OnClose() and return true.</para>
+      /// <para>If the browser's top-level parent window requires a non-standard close
+      /// notification then send that notification from TChromiumCore.OnClose and return true
+      /// (1). You are still required to complete the browser close as soon as
+      /// possible (either by calling TChromiumCore.[Try]CloseBrowser() or by proceeding with
+      /// window/view hierarchy tear-down), otherwise the browser will be left in a
+      /// partially closed state that interferes with proper functioning. Top-level
+      /// windows created on the browser process UI thread can alternately call
+      /// TChromiumCore.IsReadyToBeClosed() in the close handler to check
+      /// close status instead of relying on custom TChromiumCore.OnClose handling. See
+      /// documentation on that function for additional details.</para>
       ///
-      /// <para>The ICefLifeSpanHandler.OnBeforeClose function will be called
-      /// after OnClose() (if OnClose() is called) and immediately before the
+      /// <para>The TChromiumCore.OnBeforeClose event will be called
+      /// after TChromiumCore.OnClose (if TChromiumCore.OnClose is called) and immediately before the
       /// browser object is destroyed. The application should only exit after
-      /// OnBeforeClose() has been called for all existing browsers.</para>
+      /// TChromiumCore.OnBeforeClose has been called for all existing browsers.</para>
       ///
       /// <para>The below examples describe what should happen during window close when
       /// the browser is parented to an application-provided top-level window.</para>
       ///
-      /// <para>Example 1: Using ICefBrowserHost.TryCloseBrowser(). This is
+      /// <para>Example 1: Using TChromiumCore.TryCloseBrowser(). This is
       /// recommended for clients using standard close handling and windows created
       /// on the browser process UI thread.</para>
       /// <code>
       /// 1.  User clicks the window close button which sends a close notification
       ///     to the application's top-level window.
       /// 2.  Application's top-level window receives the close notification and
-      ///     calls TryCloseBrowser() (which internally calls CloseBrowser(false)).
-      ///     TryCloseBrowser() returns false so the client cancels the window
+      ///     calls TChromiumCore.TryCloseBrowser() (similar to calling TChromiumCore.CloseBrowser(false)).
+      ///     TChromiumCore.TryCloseBrowser() returns false so the client cancels the window
       ///     close.
       /// 3.  JavaScript 'onbeforeunload' handler executes and shows the close
-      ///     confirmation dialog (which can be overridden via
-      ///     ICefJSDialogHandler.OnBeforeUnloadDialog()).
+      ///     confirmation dialog (which can be overridden via TChromiumCore.OnBeforeUnloadDialog).
       /// 4.  User approves the close.
       /// 5.  JavaScript 'onunload' handler executes.
-      /// 6.  CEF sends a close notification to the application's top-level window
-      ///     (because OnClose() returned false by default).
-      /// 7.  Application's top-level window receives the close notification and
+      /// 6.  Application's TChromiumCore.OnClose handler is called and returns false (0) by
+      ///     default.
+      /// 7.  CEF sends a close notification to the application's top-level window
+      ///     (because TChromiumCore.OnClose returned false).
+      /// 8.  Application's top-level window receives the close notification and
       ///     calls TryCloseBrowser(). TryCloseBrowser() returns true so the client
       ///     allows the window close.
-      /// 8.  Application's top-level window is destroyed.
-      /// 9.  Application's OnBeforeClose() handler is called and the browser object is destroyed.
-      /// 10. Application exits by calling cef_quit_message_loop() if no other browsers exist.
+      /// 9.  Application's top-level window is destroyed, triggering destruction
+      ///     of the child browser window.
+      /// 10. Application's TChromiumCore.OnBeforeClose handler is called and the browser object
+      ///     is destroyed.
+      /// 11. Application exits by calling TCefApplicationCore.QuitMessageLoop if no other browsers
+      ///     exist.
       /// </code>
-      /// <para>Example 2: Using ICefBrowserHost::CloseBrowser(false) and
-      /// implementing the OnClose() callback. This is recommended for clients
+      ///
+      /// <para>Example 2: Using TChromiumCore.CloseBrowser(false) and
+      /// implementing the TChromiumCore.OnClose event. This is recommended for clients
       /// using non-standard close handling or windows that were not created on the
       /// browser process UI thread.</para>
       /// <code>
@@ -2765,19 +2860,22 @@ type
       ///     A. Calls ICefBrowserHost.CloseBrowser(false).
       ///     B. Cancels the window close.
       /// 3.  JavaScript 'onbeforeunload' handler executes and shows the close
-      ///     confirmation dialog (which can be overridden via
-      ///     ICefJSDialogHandler.OnBeforeUnloadDialog()).
+      ///     confirmation dialog (which can be overridden via TChromiumCore.OnBeforeUnloadDialog).
       /// 4.  User approves the close.
       /// 5.  JavaScript 'onunload' handler executes.
-      /// 6.  Application's OnClose() handler is called. Application will:
-      ///     A. Set a flag to indicate that the next close attempt will be allowed.
+      /// 6.  Application's TChromiumCore.OnClose handler is called. Application will:
+      ///     A. Set a flag to indicate that the next top-level window close attempt
+      ///        will be allowed.
       ///     B. Return false.
-      /// 7.  CEF sends an close notification to the application's top-level window.
+      /// 7.  CEF sends a close notification to the application's top-level window
+      ///     (because TChromiumCore.OnClose returned false).
       /// 8.  Application's top-level window receives the close notification and
-      ///     allows the window to close based on the flag from #6B.
-      /// 9.  Application's top-level window is destroyed.
-      /// 10. Application's OnBeforeClose() handler is called and the browser object is destroyed.
-      /// 11. Application exits by calling cef_quit_message_loop() if no other browsers exist.
+      ///     allows the window to close based on the flag from #6A.
+      /// 9.  Application's top-level window is destroyed, triggering destruction
+      ///     of the child browser window.
+      /// 10. Application's TChromiumCore.OnBeforeClose handler is called and the browser object
+      ///     is destroyed.
+      /// 11. Application exits by calling TCefApplicationCore.QuitMessageLoop if no other browsers exist.
       /// </code>
       /// </summary>
       /// <remarks>
@@ -2789,10 +2887,10 @@ type
       /// <para>Called on the UI thread before browser navigation. Return true (1) to
       /// cancel the navigation or false (0) to allow the navigation to proceed. The
       /// |request| object cannot be modified in this callback.</para>
-      /// <para>ICefLoadHandler.OnLoadingStateChange will be called twice in all
-      /// cases. If the navigation is allowed ICefLoadHandler.OnLoadStart and
-      /// ICefLoadHandler.OnLoadEnd will be called. If the navigation is
-      /// canceled ICefLoadHandler.OnLoadError will be called with an
+      /// <para>TChromiumCore.OnLoadingStateChange will be called twice in all
+      /// cases. If the navigation is allowed TChromiumCore.OnLoadStart and
+      /// TChromiumCore.OnLoadEnd will be called. If the navigation is
+      /// canceled TChromiumCore.OnLoadError will be called with an
       /// |errorCode| value of ERR_ABORTED. The |user_gesture| value will be true
       /// (1) if the browser navigated via explicit user gesture (e.g. clicking a
       /// link) or false (0) if it navigated automatically (e.g. via the
@@ -2856,16 +2954,19 @@ type
       property OnCertificateError                  : TOnCertificateError               read FOnCertificateError                  write FOnCertificateError;
       /// <summary>
       /// Called on the UI thread when a client certificate is being requested for
-      /// authentication. Return false (0) to use the default behavior and
-      /// automatically select the first certificate available. Return true (1) and
-      /// call ICefSelectClientCertificateCallback.Select either in this
-      /// function or at a later time to select a certificate. Do not call Select or
-      /// call it with NULL to continue without using any certificate. |isProxy|
-      /// indicates whether the host is an HTTPS proxy or the origin server. |host|
-      /// and |port| contains the hostname and port of the SSL server.
-      /// |certificates| is the list of certificates to choose from; this list has
-      /// already been pruned by Chromium so that it only contains certificates from
-      /// issuers that the server trusts.
+      /// authentication. Return false (0) to use the default behavior.  If the
+      /// |certificates| list is not NULL the default behavior will be to display a
+      /// dialog for certificate selection. If the |certificates| list is NULL then
+      /// the default behavior will be not to show a dialog and it will continue
+      /// without using any certificate. Return true (1) and call
+      /// ICefSelectClientCertificateCallback.Select either in this function
+      /// or at a later time to select a certificate. Do not call Select or call it
+      /// with NULL to continue without using any certificate. |isProxy| indicates
+      /// whether the host is an HTTPS proxy or the origin server. |host| and |port|
+      /// contains the hostname and port of the SSL server. |certificates| is the
+      /// list of certificates to choose from; this list has already been pruned by
+      /// Chromium so that it only contains certificates from issuers that the
+      /// server trusts.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -3673,7 +3774,9 @@ type
       /// Called when a new frame is created. This will be the first notification
       /// that references |frame|. Any commands that require transport to the
       /// associated renderer process (LoadRequest, SendProcessMessage, GetSource,
-      /// etc.) will be queued until OnFrameAttached is called for |frame|.
+      /// etc.) will be queued. The queued commands will be sent before
+      /// OnFrameAttached or discarded before OnFrameDestroyed if the frame never
+      /// attaches.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -3681,10 +3784,25 @@ type
       /// </remarks>
       property OnFrameCreated                         : TOnFrameCreated                   read FOnFrameCreated                         write FOnFrameCreated;
       /// <summary>
+      /// Called when an existing frame is destroyed. This will be the last
+      /// notification that references |frame| and ICefFrame.IsValid will
+      /// return false (0) for |frame|. If called during browser destruction and
+      /// after TChromiumCore.OnBeforeClose then
+      /// ICefBrowser.IsValid will return false (0) for |browser|. Any queued
+      /// commands that have not been sent will be discarded before this callback.
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_frame_handler_capi.h">CEF source file: /include/capi/cef_frame_handler_capi.h (cef_frame_handler_t)</see></para>
+      /// </remarks>
+      property OnFrameDestroyed                       : TOnFrameDestroyed                 read FOnFrameDestroyed                       write FOnFrameDestroyed;
+      /// <summary>
       /// Called when a frame can begin routing commands to/from the associated
       /// renderer process. |reattached| will be true (1) if the frame was re-
-      /// attached after exiting the BackForwardCache. Any commands that were queued
-      /// have now been dispatched.
+      /// attached after exiting the BackForwardCache or after encountering a
+      /// recoverable connection error. Any queued commands will now have been
+      /// dispatched. This function will not be called for temporary frames created
+      /// during cross-origin navigation.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -3692,12 +3810,19 @@ type
       /// </remarks>
       property OnFrameAttached                        : TOnFrameAttached                  read FOnFrameAttached                        write FOnFrameAttached;
       /// <summary>
-      /// Called when a frame loses its connection to the renderer process and will
-      /// be destroyed. Any pending or future commands will be discarded and
-      /// ICefFrame.IsValid() will now return false (0) for |frame|. If called
-      /// after ICefLifeSpanHandler.OnBeforeClose() during browser
-      /// destruction then ICefBrowser.IsValid() will return false (0) for
-      /// |browser|.
+      /// Called when a frame loses its connection to the renderer process. This may
+      /// occur when a frame is destroyed, enters the BackForwardCache, or
+      /// encounters a rare connection error. In the case of frame destruction this
+      /// call will be followed by a (potentially async) call to OnFrameDestroyed.
+      /// If frame destruction is occuring synchronously then
+      /// ICefFrame.IsValid will return false (0) for |frame|. If called
+      /// during browser destruction and after
+      /// TChromiumCore.OnBeforeClose then ICefBrowser.IsValid
+      /// will return false (0) for |browser|. If, in the non-destruction case, the
+      /// same frame later exits the BackForwardCache or recovers from a connection
+      /// error then there will be a follow-up call to OnFrameAttached. This
+      /// function will not be called for temporary frames created during cross-
+      /// origin navigation.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -3710,14 +3835,14 @@ type
       /// navigation after renderer process termination (due to crashes, etc).
       /// |old_frame| will be NULL and |new_frame| will be non-NULL when a main
       /// frame is assigned to |browser| for the first time. |old_frame| will be
-      /// non-NULL and |new_frame| will be NULL and  when a main frame is removed
-      /// from |browser| for the last time. Both |old_frame| and |new_frame| will be
-      /// non-NULL for cross-origin navigations or re-navigation after renderer
-      /// process termination. This function will be called after on_frame_created()
-      /// for |new_frame| and/or after OnFrameDetached() for |old_frame|. If
-      /// called after ICefLifeSpanHandler.OnBeforeClose() during browser
-      /// destruction then ICefBrowser.IsValid() will return false (0) for
-      /// |browser|.
+      /// non-NULL and |new_frame| will be NULL when a main frame is removed from
+      /// |browser| for the last time. Both |old_frame| and |new_frame| will be non-
+      /// NULL for cross-origin navigations or re-navigation after renderer process
+      /// termination. This function will be called after OnFrameCreated for
+      /// |new_frame| and/or after OnFrameDestroyed for |old_frame|. If called
+      /// during browser destruction and after
+      /// TChromiumCore.OnBeforeClose then ICefBrowser.IsValid
+      /// will return false (0) for |browser|.
       /// </summary>
       /// <remarks>
       /// <para>This event will be called on the browser process CEF UI thread.</para>
@@ -3726,11 +3851,13 @@ type
       property OnMainFrameChanged                     : TOnMainFrameChanged               read FOnMainFrameChanged                     write FOnMainFrameChanged;
       /// <summary>
       /// Called to execute a Chrome command triggered via menu selection or
-      /// keyboard shortcut. Values for |command_id| can be found in the
-      /// cef_command_ids.h file. |disposition| provides information about the
-      /// intended command target. Return true (1) if the command was handled or
-      /// false (0) for the default implementation. For context menu commands this
-      /// will be called after ICefContextMenuHandler.OnContextMenuCommand.
+      /// keyboard shortcut. Use the cef_id_for_command_id_name() function for
+      /// version-safe mapping of command IDC names from cef_command_ids.h to
+      /// version-specific numerical |command_id| values. |disposition| provides
+      /// information about the intended command target. Return true (1) if the
+      /// command was handled or false (0) for the default implementation. For
+      /// context menu commands this will be called after
+      /// ICefContextMenuHandler.OnContextMenuCommand.
       /// </summary>
       /// <remarks>
       /// <para>Only used with Chrome style.</para>
@@ -3739,9 +3866,11 @@ type
       /// </remarks>
       property OnChromeCommand                        : TOnChromeCommandEvent                 read FOnChromeCommand                    write FOnChromeCommand;
       /// <summary>
-      /// Called to check if a Chrome app menu item should be visible. Values for
-      /// |command_id| can be found in the cef_command_ids.h file. Only called for
-      /// menu items that would be visible by default.
+      /// Called to check if a Chrome app menu item should be visible. Use the
+      /// cef_id_for_command_id_name() function for version-safe mapping of command
+      /// IDC names from cef_command_ids.h to version-specific numerical
+      /// |command_id| values. Only called for menu items that would be visible by
+      /// default.
       /// </summary>
       /// <remarks>
       /// <para>Only used with Chrome style.</para>
@@ -3750,9 +3879,11 @@ type
       /// </remarks>
       property OnIsChromeAppMenuItemVisible           : TOnIsChromeAppMenuItemVisibleEvent    read FOnIsChromeAppMenuItemVisible       write FOnIsChromeAppMenuItemVisible;
       /// <summary>
-      /// Called to check if a Chrome app menu item should be enabled. Values for
-      /// |command_id| can be found in the cef_command_ids.h file. Only called for
-      /// menu items that would be enabled by default.
+      /// Called to check if a Chrome app menu item should be enabled. Use the
+      /// cef_id_for_command_id_name() function for version-safe mapping of command
+      /// IDC names from cef_command_ids.h to version-specific numerical
+      /// |command_id| values. Only called for menu items that would be enabled by
+      /// default.
       /// </summary>
       /// <remarks>
       /// <para>Only used with Chrome style.</para>
@@ -3981,6 +4112,8 @@ begin
   FHTTPSUpgrade            := STATE_DEFAULT;
   FHSTSPolicyBypassList    := '';
   FCredentialsService      := STATE_DEFAULT;
+  FAutofillCreditCard      := STATE_DEFAULT;
+  FAutofillProfile         := STATE_DEFAULT;
   FTryingToCloseBrowser    := False;
   {$IFDEF LINUX}
   FXDisplay                := nil;
@@ -3993,13 +4126,10 @@ begin
 
   {$IFDEF MSWINDOWS}
   FOldBrowserCompWndPrc   := nil;
-  FOldWidgetCompWndPrc    := nil;
   FOldRenderCompWndPrc    := nil;
   FBrowserCompStub        := nil;
-  FWidgetCompStub         := nil;
   FRenderCompStub         := nil;
   FBrowserCompHWND        := 0;
-  FWidgetCompHWND         := 0;
   FRenderCompHWND         := 0;
   {$ENDIF MSWINDOWS}
 
@@ -4444,6 +4574,7 @@ begin
 
   // ICefLifeSpanHandler
   FOnBeforePopup                  := nil;
+  FOnBeforePopupAborted           := nil;
   FOnBeforeDevToolsPopup          := nil;
   FOnAfterCreated                 := nil;
   FOnBeforeClose                  := nil;
@@ -4541,6 +4672,7 @@ begin
 
   // ICefFrameHandler
   FOnFrameCreated                     := nil;
+  FOnFrameDestroyed                   := nil;
   FOnFrameAttached                    := nil;
   FOnFrameDetached                    := nil;
   FOnMainFrameChanged                 := nil;
@@ -4581,7 +4713,6 @@ begin
 
   {$IFDEF MSWINDOWS}
   FOnBrowserCompMsg                   := nil;
-  FOnWidgetCompMsg                    := nil;
   FOnRenderCompMsg                    := nil;
   {$ENDIF}
 end;
@@ -4725,7 +4856,7 @@ begin
       FDevWindowInfo.WindowName := aWindowName;
     end
    else
-    FDevWindowInfo.SetAsPopup(WindowHandle, aWindowName);
+    FDevWindowInfo.SetAsPopup(aDevToolsWnd, aWindowName);
   {$ENDIF}
   {$IFDEF MACOSX}
    FDevWindowInfo.SetAsChild(aDevToolsWnd, aClientRect);
@@ -4914,6 +5045,12 @@ begin
     Result := True;
 end;
 
+function TChromiumCore.IsReadyToBeClosed : boolean;
+begin
+  Result := Initialized and
+            Browser.Host.IsReadyToBeClosed;
+end;
+
 function TChromiumCore.CreateBrowserHost(      aWindowInfo : PCefWindowInfo;
                                          const aURL        : ustring;
                                          const aSettings   : PCefBrowserSettings;
@@ -4969,6 +5106,7 @@ var
 begin
   if Initialized and (FPDFPrintOptions <> nil) then
     begin
+      TempSettings.size := SizeOf(TCefPdfPrintSettings);
       FPDFPrintOptions.CopyToSettings(TempSettings);
       TempCallback := TCefCustomPDFPrintCallBack.Create(self);
       Browser.Host.PrintToPdf(aFilePath, @TempSettings, TempCallback);
@@ -5004,6 +5142,22 @@ begin
 
       if (TempFrame <> nil) and TempFrame.IsValid then
         TempFrame.Paste;
+    end;
+end;
+
+procedure TChromiumCore.ClipboardPasteAndMatchStyle;
+var
+  TempFrame : ICefFrame;
+begin
+  if Initialized then
+    begin
+      TempFrame := Browser.FocusedFrame;
+
+      if (TempFrame = nil) then
+        TempFrame := Browser.MainFrame;
+
+      if (TempFrame <> nil) and TempFrame.IsValid then
+        TempFrame.PasteAndMatchStyle;
     end;
 end;
 
@@ -5341,6 +5495,14 @@ begin
 
   if Initialized then
     Result := Browser.Host.OpenerWindowHandle;
+end;
+
+function TChromiumCore.GetOpenerIdentifier: Integer;
+begin
+  if Initialized then
+    Result := Browser.Host.OpenerIdentifier
+   else
+    Result := 0;
 end;
 
 function TChromiumCore.GetFrameIsFocused : boolean;
@@ -7060,9 +7222,6 @@ var
 begin
   FUpdatePreferences := False;
 
-  // The preferences registered in CEF are defined in :
-  // /libcef/browser/prefs/browser_prefs.cc
-
   UpdateProxyPrefs(aBrowser);
   UpdatePreference(aBrowser, 'enable_do_not_track',                  FDoNotTrack);
   UpdatePreference(aBrowser, 'enable_referrers',                     FSendReferrer);
@@ -7138,6 +7297,12 @@ begin
 
   if (FCredentialsService <> STATE_DEFAULT) then
     UpdatePreference(aBrowser, 'credentials_enable_service', (FCredentialsService = STATE_ENABLED));
+
+  if (FAutofillCreditCard <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'autofill.credit_card_enabled', (FAutofillCreditCard = STATE_ENABLED));
+
+  if (FAutofillProfile <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'autofill.profile_enabled', (FAutofillProfile = STATE_ENABLED));
 
   if assigned(FOnPrefsUpdated) then
     FOnPrefsUpdated(self);
@@ -7956,9 +8121,10 @@ end;
 
 function TChromiumCore.MustCreateFrameHandler : boolean;
 begin
-  Result := assigned(FOnFrameCreated)  or
-            assigned(FOnFrameAttached) or
-            assigned(FOnFrameDetached) or
+  Result := assigned(FOnFrameCreated)   or
+            assigned(FOnFrameDestroyed) or
+            assigned(FOnFrameAttached)  or
+            assigned(FOnFrameDetached)  or
             assigned(FOnMainFrameChanged);
 end;
 
@@ -8164,29 +8330,6 @@ begin
   end;
 end;
 
-procedure TChromiumCore.WidgetCompWndProc(var aMessage: TMessage);
-var
-  TempHandled : boolean;
-begin
-  try
-    TempHandled := False;
-
-    try
-      if assigned(FOnWidgetCompMsg) then
-        FOnWidgetCompMsg(self, aMessage, TempHandled);
-
-      if not(TempHandled) then
-        CallOldCompWndProc(FOldWidgetCompWndPrc, FWidgetCompHWND, aMessage);
-    finally
-      if aMessage.Msg = WM_DESTROY then
-        RestoreCompWndProc(FWidgetCompHWND, 0, FOldWidgetCompWndPrc);
-    end;
-  except
-    on e : exception do
-      if CustomExceptionHandler('TChromiumCore.WidgetCompWndProc', e) then raise;
-  end;
-end;
-
 procedure TChromiumCore.RenderCompWndProc(var aMessage: TMessage);
 var
   TempHandled : boolean;
@@ -8214,9 +8357,6 @@ procedure TChromiumCore.RestoreOldCompWndProc;
 begin
   RestoreCompWndProc(FBrowserCompHWND, 0, FOldBrowserCompWndPrc);
   FreeAndNilStub(FBrowserCompStub);
-
-  RestoreCompWndProc(FWidgetCompHWND, 0, FOldWidgetCompWndPrc);
-  FreeAndNilStub(FWidgetCompStub);
 
   RestoreCompWndProc(FRenderCompHWND, 0, FOldRenderCompWndPrc);
   FreeAndNilStub(FRenderCompStub);
@@ -8446,6 +8586,7 @@ end;
 
 function TChromiumCore.doOnBeforePopup(const browser            : ICefBrowser;
                                        const frame              : ICefFrame;
+                                             popup_id           : Integer;
                                        const targetUrl          : ustring;
                                        const targetFrameName    : ustring;
                                              targetDisposition  : TCefWindowOpenDisposition;
@@ -8460,9 +8601,15 @@ begin
   Result := False;
 
   if assigned(FOnBeforePopup) then
-    FOnBeforePopup(Self, browser, frame, targetUrl, targetFrameName,
+    FOnBeforePopup(Self, browser, frame, popup_id, targetUrl, targetFrameName,
                    targetDisposition, userGesture, popupFeatures, windowInfo, client,
                    settings, extra_info, noJavascriptAccess, Result);
+end;
+
+procedure TChromiumCore.doOnBeforePopupAborted(const browser: ICefBrowser; popup_id: Integer);
+begin
+  if assigned(FOnBeforePopupAborted) then
+    FOnBeforePopupAborted(Self, browser, popup_id);
 end;
 
 procedure TChromiumCore.doOnBeforeDevToolsPopup(const browser            : ICefBrowser;
@@ -8897,6 +9044,12 @@ begin
     FOnFrameCreated(self, browser, frame);
 end;
 
+procedure TChromiumCore.doOnFrameDestroyed(const browser: ICefBrowser; const frame: ICefFrame);
+begin
+  if assigned(FOnFrameDestroyed) then
+    FOnFrameDestroyed(self, browser, frame);
+end;
+
 procedure TChromiumCore.doOnFrameAttached(const browser: ICefBrowser; const frame: ICefFrame; reattached: boolean);
 begin
   if assigned(FOnFrameAttached) then
@@ -9071,7 +9224,10 @@ begin
   Result := False;
 
   if assigned(FOnGetScreenInfo) then
-    FOnGetScreenInfo(Self, browser, screenInfo, Result);
+    begin
+      screenInfo.size := SizeOf(screenInfo);
+      FOnGetScreenInfo(Self, browser, screenInfo, Result);
+    end;
 end;
 
 function TChromiumCore.doOnGetScreenPoint(const browser: ICefBrowser; viewX, viewY: Integer; var screenX, screenY: Integer): Boolean;
@@ -9289,26 +9445,10 @@ begin
     FOnDocumentAvailableInMainFrame(Self, browser);
 end;
 
-{$IFDEF MSWINDOWS}
-function EnumProcOSRChromeWidgetWin0(hWnd: HWND; lParam: LPARAM): BOOL; stdcall;
-var
-  ClsName: array[0..256] of Char;
-begin
-  ClsName[GetClassName(hWnd, ClsName, 256)] := #0;
-  if StrComp(ClsName, 'Chrome_WidgetWin_0') = 0 then
-  begin
-    PHandle(lParam)^ := hWnd;
-    Result := False;
-  end
-  else
-    Result := True;
-end;
-{$ENDIF MSWINDOWS}
-
 procedure TChromiumCore.doOnRenderViewReady(const browser: ICefBrowser);
 {$IFDEF MSWINDOWS}
 var
-  OldBrowserCompHWND, OldWidgetCompHWND, OldRenderCompHWND: THandle;
+  OldBrowserCompHWND, OldRenderCompHWND: THandle;
 {$ENDIF}
 begin
   if (browser            <> nil) and
@@ -9317,42 +9457,17 @@ begin
     begin
       {$IFDEF MSWINDOWS}
       OldBrowserCompHWND := FBrowserCompHWND;
-      OldWidgetCompHWND  := FWidgetCompHWND;
       OldRenderCompHWND  := FRenderCompHWND;
       FBrowserCompHWND   := browser.Host.WindowHandle;
 
       if (FBrowserCompHWND <> 0) then
-        begin
-          FWidgetCompHWND := FindWindowEx(FBrowserCompHWND, 0, 'Chrome_WidgetWin_0', '');
-
-          if (FWidgetCompHWND = 0) and FIsOSR and CefCurrentlyOn(TID_UI) then
-            begin
-              // The WidgetCompHWND window doesn't have a HwndParent (Owner). If we are in OSR mode this
-              // causes popup menus that are opened by CEF to stay open if the user clicks somewhere else.
-              // With this code we search for the Widget window in the UI Thread's window list and set
-              // the Browser window as its HwndParent. This works around the bug.
-              EnumThreadWindows(GetCurrentThreadId, @EnumProcOSRChromeWidgetWin0, NativeInt(@FWidgetCompHWND));
-
-              if (FWidgetCompHWND <> 0) then
-                SetWindowLongPtr(FWidgetCompHWND, GWLP_HWNDPARENT, NativeInt(FBrowserCompHWND));
-            end;
-        end;
-
-      if (FWidgetCompHWND <> 0) then
-        FRenderCompHWND := FindWindowEx(FWidgetCompHWND, 0, 'Chrome_RenderWidgetHostHWND', 'Chrome Legacy Window');
+        FRenderCompHWND := FindWindowEx(FBrowserCompHWND, 0, 'Chrome_RenderWidgetHostHWND', 'Chrome Legacy Window');
 
       RestoreCompWndProc(OldBrowserCompHWND, FBrowserCompHWND, FOldBrowserCompWndPrc);
       if assigned(FOnBrowserCompMsg) and (FBrowserCompHWND <> 0) and (FOldBrowserCompWndPrc = nil) then
         begin
           CreateStub({$IFDEF FPC}@{$ENDIF}BrowserCompWndProc, FBrowserCompStub);
           FOldBrowserCompWndPrc := InstallCompWndProc(FBrowserCompHWND, FBrowserCompStub);
-        end;
-
-      RestoreCompWndProc(OldWidgetCompHWND, FWidgetCompHWND, FOldWidgetCompWndPrc);
-      if assigned(FOnWidgetCompMsg) and (FWidgetCompHWND <> 0) and (FOldWidgetCompWndPrc = nil) then
-        begin
-          CreateStub({$IFDEF FPC}@{$ENDIF}WidgetCompWndProc, FWidgetCompStub);
-          FOldWidgetCompWndPrc := InstallCompWndProc(FWidgetCompHWND, FWidgetCompStub);
         end;
 
       RestoreCompWndProc(OldRenderCompHWND, FRenderCompHWND, FOldRenderCompWndPrc);
@@ -9615,7 +9730,12 @@ end;
 procedure TChromiumCore.SendKeyEvent(const event: PCefKeyEvent);
 begin
   if Initialized then
-    Browser.Host.SendKeyEvent(event);
+    begin
+      if assigned(event) then
+        event^.size := SizeOf(TCefKeyEvent);
+
+      Browser.Host.SendKeyEvent(event);
+    end;
 end;
 
 procedure TChromiumCore.SendMouseClickEvent(const event      : PCefMouseEvent;

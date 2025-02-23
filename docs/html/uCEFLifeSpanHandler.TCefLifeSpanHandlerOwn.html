@@ -26,29 +26,33 @@
 <table class="summary wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
-<td class="itemcode"><code>function <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnBeforePopup-ICefBrowser-ICefFrame-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-">OnBeforePopup</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; const frame: <a href="uCEFInterfaces.ICefFrame.html">ICefFrame</a>; const targetUrl, targetFrameName: <a href="uCEFTypes.html#ustring">ustring</a>; targetDisposition: <a href="uCEFTypes.html#TCefWindowOpenDisposition">TCefWindowOpenDisposition</a>; userGesture: Boolean; const popupFeatures: <a href="uCEFTypes.TCefPopupFeatures.html">TCefPopupFeatures</a>; var windowInfo: <a href="uCEFTypes.TCefWindowInfo.html">TCefWindowInfo</a>; var client: <a href="uCEFInterfaces.ICefClient.html">ICefClient</a>; var settings: <a href="uCEFTypes.TCefBrowserSettings.html">TCefBrowserSettings</a>; var extra_info: <a href="uCEFInterfaces.ICefDictionaryValue.html">ICefDictionaryValue</a>; var noJavascriptAccess: Boolean): Boolean; virtual;</code></td>
+<td class="itemcode"><code>function <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnBeforePopup-ICefBrowser-ICefFrame-Integer-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-">OnBeforePopup</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; const frame: <a href="uCEFInterfaces.ICefFrame.html">ICefFrame</a>; popup_id: Integer; const targetUrl, targetFrameName: <a href="uCEFTypes.html#ustring">ustring</a>; targetDisposition: <a href="uCEFTypes.html#TCefWindowOpenDisposition">TCefWindowOpenDisposition</a>; userGesture: Boolean; const popupFeatures: <a href="uCEFTypes.TCefPopupFeatures.html">TCefPopupFeatures</a>; var windowInfo: <a href="uCEFTypes.TCefWindowInfo.html">TCefWindowInfo</a>; var client: <a href="uCEFInterfaces.ICefClient.html">ICefClient</a>; var settings: <a href="uCEFTypes.TCefBrowserSettings.html">TCefBrowserSettings</a>; var extra_info: <a href="uCEFInterfaces.ICefDictionaryValue.html">ICefDictionaryValue</a>; var noJavascriptAccess: Boolean): Boolean; virtual;</code></td>
 </tr>
 <tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnBeforePopupAborted-ICefBrowser-Integer-">OnBeforePopupAborted</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; popup_id: Integer); virtual;</code></td>
+</tr>
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnBeforeDevToolsPopup-ICefBrowser-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-boolean-">OnBeforeDevToolsPopup</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; var windowInfo: <a href="uCEFTypes.TCefWindowInfo.html">TCefWindowInfo</a>; var client: <a href="uCEFInterfaces.ICefClient.html">ICefClient</a>; var settings: <a href="uCEFTypes.TCefBrowserSettings.html">TCefBrowserSettings</a>; var extra_info: <a href="uCEFInterfaces.ICefDictionaryValue.html">ICefDictionaryValue</a>; var use_default_window: boolean); virtual;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnAfterCreated-ICefBrowser-">OnAfterCreated</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>); virtual;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
 <td class="itemcode"><code>function <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#DoClose-ICefBrowser-">DoClose</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>): Boolean; virtual;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#OnBeforeClose-ICefBrowser-">OnBeforeClose</a></strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>); virtual;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
 <td class="itemcode"><code>procedure <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#RemoveReferences">RemoveReferences</a></strong>; virtual;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>constructor <strong><a href="uCEFLifeSpanHandler.TCefLifeSpanHandlerOwn.html#Create">Create</a></strong>; virtual;</code></td>
 </tr>
@@ -58,11 +62,33 @@
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
-<td class="itemcode"><span id="OnBeforePopup-ICefBrowser-ICefFrame-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-"></span><code>function <strong>OnBeforePopup</strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; const frame: <a href="uCEFInterfaces.ICefFrame.html">ICefFrame</a>; const targetUrl, targetFrameName: <a href="uCEFTypes.html#ustring">ustring</a>; targetDisposition: <a href="uCEFTypes.html#TCefWindowOpenDisposition">TCefWindowOpenDisposition</a>; userGesture: Boolean; const popupFeatures: <a href="uCEFTypes.TCefPopupFeatures.html">TCefPopupFeatures</a>; var windowInfo: <a href="uCEFTypes.TCefWindowInfo.html">TCefWindowInfo</a>; var client: <a href="uCEFInterfaces.ICefClient.html">ICefClient</a>; var settings: <a href="uCEFTypes.TCefBrowserSettings.html">TCefBrowserSettings</a>; var extra_info: <a href="uCEFInterfaces.ICefDictionaryValue.html">ICefDictionaryValue</a>; var noJavascriptAccess: Boolean): Boolean; virtual;</code></td>
+<td class="itemcode"><span id="OnBeforePopup-ICefBrowser-ICefFrame-Integer-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-"></span><code>function <strong>OnBeforePopup</strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; const frame: <a href="uCEFInterfaces.ICefFrame.html">ICefFrame</a>; popup_id: Integer; const targetUrl, targetFrameName: <a href="uCEFTypes.html#ustring">ustring</a>; targetDisposition: <a href="uCEFTypes.html#TCefWindowOpenDisposition">TCefWindowOpenDisposition</a>; userGesture: Boolean; const popupFeatures: <a href="uCEFTypes.TCefPopupFeatures.html">TCefPopupFeatures</a>; var windowInfo: <a href="uCEFTypes.TCefWindowInfo.html">TCefWindowInfo</a>; var client: <a href="uCEFInterfaces.ICefClient.html">ICefClient</a>; var settings: <a href="uCEFTypes.TCefBrowserSettings.html">TCefBrowserSettings</a>; var extra_info: <a href="uCEFInterfaces.ICefDictionaryValue.html">ICefDictionaryValue</a>; var noJavascriptAccess: Boolean): Boolean; virtual;</code></td>
 </tr>
 <tr><td colspan="2">
-<p class="inheritdescription">This item has no description. Showing description inherited from <a class="normal" href="uCEFInterfaces.ICefLifeSpanHandler.html#OnBeforePopup-ICefBrowser-ICefFrame-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-">ICefLifeSpanHandler.OnBeforePopup</a>.</p><p>
- Called on the UI thread before a new popup browser is created. The |browser| and |frame| values represent the source of the popup request. The |target_url| and |target_frame_name| values indicate where the popup browser should navigate and may be NULL if not specified with the request. The |target_disposition| value indicates where the user intended to open the popup (e.g. current tab, new tab, etc). The |user_gesture| value will be true (1) if the popup was opened via explicit user gesture (e.g. clicking a link) or false (0) if the popup opened automatically (e.g. via the DomContentLoaded event). The |popupFeatures| structure contains additional information about the requested popup window. To allow creation of the popup browser optionally modify |windowInfo|, |client|, |settings| and |no_javascript_access| and return false (0). To cancel creation of the popup browser return true (1). The |client| and |settings| values will default to the source browser's values. If the |no_javascript_access| value is set to false (0) the new browser will not be scriptable and may not be hosted in the same renderer process as the source browser. Any modifications to |windowInfo| will be ignored if the parent browser is wrapped in a ICefBrowserView. Popup browser creation will be canceled if the parent browser is destroyed before the popup browser creation completes (indicated by a call to OnAfterCreated for the popup browser). The |extra_info| parameter provides an opportunity to specify extra information specific to the created popup browser that will be passed to ICefRenderProcessHandler.OnBrowserCreated in the render process. </p>
+<p class="inheritdescription">This item has no description. Showing description inherited from <a class="normal" href="uCEFInterfaces.ICefLifeSpanHandler.html#OnBeforePopup-ICefBrowser-ICefFrame-Integer-ustring-ustring-TCefWindowOpenDisposition-Boolean-TCefPopupFeatures-TCefWindowInfo-ICefClient-TCefBrowserSettings-ICefDictionaryValue-Boolean-">ICefLifeSpanHandler.OnBeforePopup</a>.</p><p>
+
+
+<p>Called on the UI thread before a new popup browser is created. The |browser| and |frame| values represent the source of the popup request (opener browser and frame). The |popup_id| value uniquely identifies the popup in the context of the opener browser. The |target_url| and |target_frame_name| values indicate where the popup browser should navigate and may be NULL if not specified with the request. The |target_disposition| value indicates where the user intended to open the popup (e.g. current tab, new tab, etc). The |user_gesture| value will be true (1) if the popup was opened via explicit user gesture (e.g. clicking a link) or false (0) if the popup opened automatically (e.g. via the DomContentLoaded event). The |popupFeatures| structure contains additional information about the requested popup window. To allow creation of the popup browser optionally modify |windowInfo|, |client|, |settings| and |no_javascript_access| and return false (0). To cancel creation of the popup browser return true (1). The |client| and |settings| values will default to the source browser's values. If the |no_javascript_access| value is set to false (0) the new browser will not be scriptable and may not be hosted in the same renderer process as the source browser. Any modifications to |windowInfo| will be ignored if the parent browser is wrapped in a cef_browser_view_t. The |extra_info| parameter provides an opportunity to specify extra information specific to the created popup browser that will be passed to cef_render_process_handler_t::on_browser_created() in the render process.
+
+<p>If popup browser creation succeeds then OnAfterCreated will be called for the new popup browser. If popup browser creation fails, and if the opener browser has not yet been destroyed, then OnBeforePopupAborted will be called for the opener browser. See OnBeforePopupAborted documentation for additional details.
+
+<p></p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="protected.gif" alt="Protected" title="Protected"></a></td>
+<td class="itemcode"><span id="OnBeforePopupAborted-ICefBrowser-Integer-"></span><code>procedure <strong>OnBeforePopupAborted</strong>(const browser: <a href="uCEFInterfaces.ICefBrowser.html">ICefBrowser</a>; popup_id: Integer); virtual;</code></td>
+</tr>
+<tr><td colspan="2">
+<p class="inheritdescription">This item has no description. Showing description inherited from <a class="normal" href="uCEFInterfaces.ICefLifeSpanHandler.html#OnBeforePopupAborted-ICefBrowser-Integer-">ICefLifeSpanHandler.OnBeforePopupAborted</a>.</p><p>
+
+
+<p>Called on the CEF UI thread if a new popup browser is aborted. This only occurs if the popup is allowed in OnBeforePopup and creation fails before OnAfterCreated is called for the new popup browser. The |browser| value is the source of the popup request (opener browser). The |popup_id| value uniquely identifies the popup in the context of the opener browser, and is the same value that was passed to OnBeforePopup.
+
+<p>Any client state associated with pending popups should be cleared in OnBeforePopupAborted, OnAfterCreated of the popup browser, or OnBeforeClose of the opener browser. OnBeforeClose of the opener browser may be called before this function in cases where the opener is closing during popup creation, in which case ICefBrowser.IsValid will return false (0) in this function.
+
+<p></p>
 </td></tr>
 </table>
 <table class="detail wide_list">
@@ -100,23 +126,82 @@
 </tr>
 <tr><td colspan="2">
 <p class="inheritdescription">This item has no description. Showing description inherited from <a class="normal" href="uCEFInterfaces.ICefLifeSpanHandler.html#DoClose-ICefBrowser-">ICefLifeSpanHandler.DoClose</a>.</p><p>
- Called when a browser has received a request to close. This may result directly from a call to ICefBrowserHost.*CloseBrowser or indirectly if the browser is parented to a top-level window created by CEF and the user attempts to close that window (by clicking the 'X', for example). The DoClose function will be called after the JavaScript 'onunload' event has been fired.
 
-<p>An application should handle top-level owner window close notifications by calling ICefBrowserHost.TryCloseBrowser or ICefBrowserHost.CloseBrowser(false) instead of allowing the window to close immediately (see the examples below). This gives CEF an opportunity to process the 'onbeforeunload' event and optionally cancel the close before DoClose is called.
 
-<p>When windowed rendering is enabled CEF will internally create a window or view to host the browser. In that case returning false (0) from DoClose() will send the standard close notification to the browser's top-level owner window (e.g. WM_CLOSE on Windows, performClose: on OS X, &quot;delete_event&quot; on Linux or ICefWindowDelegate.CanClose callback from Views). If the browser's host window/view has already been destroyed (via view hierarchy tear-down, for example) then DoClose() will not be called for that browser since is no longer possible to cancel the close.
+<p>Called when an Alloy style browser is ready to be closed, meaning that the close has already been initiated and that JavaScript unload handlers have already executed or should be ignored. This may result directly from a call to TChromiumCore.[Try]CloseBrowser() or indirectly if the browser's top-level parent window was created by CEF and the user attempts to close that window (by clicking the 'X', for example). TChromiumCore.OnClose will not be called if the browser's host window/view has already been destroyed (via parent window/view hierarchy tear-down, for example), as it is no longer possible to customize the close behavior at that point.
 
-<p>When windowed rendering is disabled returning false (0) from DoClose() will cause the browser object to be destroyed immediately.
+<p>An application should handle top-level parent window close notifications by calling TChromiumCore.TryCloseBrowser() or TChromiumCore.CloseBrowser(false) instead of allowing the window to close immediately (see the examples below). This gives CEF an opportunity to process JavaScript unload handlers and optionally cancel the close before TChromiumCore.OnClose is called.
 
-<p>If the browser's top-level owner window requires a non-standard close notification then send that notification from DoClose() and return true (1).
+<p>When windowed rendering is enabled CEF will create an internal child window/view to host the browser. In that case returning false (0) from TChromiumCore.OnClose will send the standard close notification to the browser's top- level parent window (e.g. WM_CLOSE on Windows, performClose: on OS X, &quot;delete_event&quot; on Linux or TCEFWindowComponent.OnCanClose callback from Views).
 
-<p>The ICefLifeSpanHandler.OnBeforeClose function will be called after DoClose() (if DoClose() is called) and immediately before the browser object is destroyed. The application should only exit after OnBeforeClose() has been called for all existing browsers.
+<p>When windowed rendering is disabled there is no internal window/view and returning false (0) from TChromiumCore.OnClose will cause the browser object to be destroyed immediately.
+
+<p>If the browser's top-level parent window requires a non-standard close notification then send that notification from TChromiumCore.OnClose and return true (1). You are still required to complete the browser close as soon as possible (either by calling TChromiumCore.[Try]CloseBrowser() or by proceeding with window/view hierarchy tear-down), otherwise the browser will be left in a partially closed state that interferes with proper functioning. Top-level windows created on the browser process UI thread can alternately call TChromiumCore.IsReadyToBeClosed() in the close handler to check close status instead of relying on custom TChromiumCore.OnClose handling. See documentation on that function for additional details.
+
+<p>The TChromiumCore.OnBeforeClose event will be called after TChromiumCore.OnClose (if TChromiumCore.OnClose is called) and immediately before the browser object is destroyed. The application should only exit after TChromiumCore.OnBeforeClose has been called for all existing browsers.
 
 <p>The below examples describe what should happen during window close when the browser is parented to an application-provided top-level window.
 
-<p>Example 1: Using ICefBrowserHost.TryCloseBrowser(). This is recommended for clients using standard close handling and windows created on the browser process UI thread. 1. User clicks the window close button which sends a close notification to the application's top-level window. 2. Application's top-level window receives the close notification and calls TryCloseBrowser() (which internally calls CloseBrowser(false)). TryCloseBrowser() returns false so the client cancels the window close. 3. JavaScript 'onbeforeunload' handler executes and shows the close confirmation dialog (which can be overridden via ICefJSDialogHandler.OnBeforeUnloadDialog()). 4. User approves the close. 5. JavaScript 'onunload' handler executes. 6. CEF sends a close notification to the application's top-level window (because DoClose() returned false by default). 7. Application's top-level window receives the close notification and calls TryCloseBrowser(). TryCloseBrowser() returns true so the client allows the window close. 8. Application's top-level window is destroyed. 9. Application's OnBeforeClose() handler is called and the browser object is destroyed. 10. Application exits by calling cef_quit_message_loop() if no other browsers exist.
+<p>Example 1: Using TChromiumCore.TryCloseBrowser(). This is recommended for clients using standard close handling and windows created on the browser process UI thread.
 
-<p>Example 2: Using ICefBrowserHost::CloseBrowser(false) and implementing the DoClose() callback. This is recommended for clients using non-standard close handling or windows that were not created on the browser process UI thread. 1. User clicks the window close button which sends a close notification to the application's top-level window. 2. Application's top-level window receives the close notification and: A. Calls ICefBrowserHost.CloseBrowser(false). B. Cancels the window close. 3. JavaScript 'onbeforeunload' handler executes and shows the close confirmation dialog (which can be overridden via ICefJSDialogHandler.OnBeforeUnloadDialog()). 4. User approves the close. 5. JavaScript 'onunload' handler executes. 6. Application's DoClose() handler is called. Application will: A. Set a flag to indicate that the next close attempt will be allowed. B. Return false. 7. CEF sends an close notification to the application's top-level window. 8. Application's top-level window receives the close notification and allows the window to close based on the flag from #6B. 9. Application's top-level window is destroyed. 10. Application's OnBeforeClose() handler is called and the browser object is destroyed. 11. Application exits by calling cef_quit_message_loop() if no other browsers exist. </p>
+<p></p>
+
+<pre class="preformatted">
+1.  User clicks the window close button which sends a close notification
+    to the application's top-level window.
+2.  Application's top-level window receives the close notification and
+    calls TChromiumCore.TryCloseBrowser() (similar to calling TChromiumCore.CloseBrowser(false)).
+    TChromiumCore.TryCloseBrowser() returns false so the client cancels the window
+    close.
+3.  JavaScript 'onbeforeunload' handler executes and shows the close
+    confirmation dialog (which can be overridden via TChromiumCore.OnBeforeUnloadDialog).
+4.  User approves the close.
+5.  JavaScript 'onunload' handler executes.
+6.  Application's TChromiumCore.OnClose handler is called and returns false (0) by
+    default.
+7.  CEF sends a close notification to the application's top-level window
+    (because TChromiumCore.OnClose returned false).
+8.  Application's top-level window receives the close notification and
+    calls TryCloseBrowser(). TryCloseBrowser() returns true so the client
+    allows the window close.
+9.  Application's top-level window is destroyed, triggering destruction
+    of the child browser window.
+10. Application's TChromiumCore.OnBeforeClose handler is called and the browser object
+    is destroyed.
+11. Application exits by calling TCefApplicationCore.QuitMessageLoop if no other browsers
+    exist.</pre>
+
+<p>
+
+<p>Example 2: Using TChromiumCore.CloseBrowser(false) and implementing the TChromiumCore.OnClose event. This is recommended for clients using non-standard close handling or windows that were not created on the browser process UI thread.
+
+<p></p>
+
+<pre class="preformatted">
+1.  User clicks the window close button which sends a close notification
+    to the application's top-level window.
+2.  Application's top-level window receives the close notification and:
+    A. Calls ICefBrowserHost.CloseBrowser(false).
+    B. Cancels the window close.
+3.  JavaScript 'onbeforeunload' handler executes and shows the close
+    confirmation dialog (which can be overridden via TChromiumCore.OnBeforeUnloadDialog).
+4.  User approves the close.
+5.  JavaScript 'onunload' handler executes.
+6.  Application's TChromiumCore.OnClose handler is called. Application will:
+    A. Set a flag to indicate that the next top-level window close attempt
+       will be allowed.
+    B. Return false.
+7.  CEF sends a close notification to the application's top-level window
+    (because TChromiumCore.OnClose returned false).
+8.  Application's top-level window receives the close notification and
+    allows the window to close based on the flag from #6A.
+9.  Application's top-level window is destroyed, triggering destruction
+    of the child browser window.
+10. Application's TChromiumCore.OnBeforeClose handler is called and the browser object
+    is destroyed.
+11. Application exits by calling TCefApplicationCore.QuitMessageLoop if no other browsers exist.</pre>
+
+<p> </p>
 </td></tr>
 </table>
 <table class="detail wide_list">
@@ -126,7 +211,7 @@
 </tr>
 <tr><td colspan="2">
 <p class="inheritdescription">This item has no description. Showing description inherited from <a class="normal" href="uCEFInterfaces.ICefLifeSpanHandler.html#OnBeforeClose-ICefBrowser-">ICefLifeSpanHandler.OnBeforeClose</a>.</p><p>
- Called just before a browser is destroyed. Release all references to the browser object and do not attempt to execute any functions on the browser object (other than IsValid, GetIdentifier or IsSame) after this callback returns. ICefFrameHandler callbacks related to final main frame destruction will arrive after this callback and ICefBrowser.IsValid will return false (0) at that time. Any in-progress network requests associated with |browser| will be aborted when the browser is destroyed, and ICefResourceRequestHandler callbacks related to those requests may still arrive on the IO thread after this callback. See ICefFrameHandler and DoClose() documentation for additional usage information. </p>
+ Called just before a browser is destroyed. Release all references to the browser object and do not attempt to execute any functions on the browser object (other than IsValid, GetIdentifier or IsSame) after this callback returns. ICefFrameHandler callbacks related to final main frame destruction, and OnBeforePopupAborted callbacks for any pending popups, will arrive after this callback and ICefBrowser.IsValid will return false (0) at that time. Any in-progress network requests associated with |browser| will be aborted when the browser is destroyed, and ICefResourceRequestHandler callbacks related to those requests may still arrive on the IO thread after this callback. See ICefFrameHandler and DoClose() documentation for additional usage information. </p>
 </td></tr>
 </table>
 <table class="detail wide_list">

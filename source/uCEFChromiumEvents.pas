@@ -30,7 +30,7 @@ type
   TOnLoadingStateChange           = procedure(Sender: TObject; const browser: ICefBrowser; isLoading, canGoBack, canGoForward: Boolean) of object;
 
   // ICefFocusHandler
-  TOnTakeFocus                    = procedure(Sender: TObject; const browser: ICefBrowser; next: Boolean) of object;
+  TOnTakeFocus                    = procedure(Sender: TObject; const browser: ICefBrowser; next_: Boolean) of object;
   TOnSetFocus                     = procedure(Sender: TObject; const browser: ICefBrowser; source: TCefFocusSource; out Result: Boolean) of object;
   TOnGotFocus                     = procedure(Sender: TObject; const browser: ICefBrowser) of object;
 
@@ -72,7 +72,8 @@ type
   TOnDialogClosed                 = procedure(Sender: TObject; const browser: ICefBrowser) of object;
 
   // ICefLifeSpanHandler
-  TOnBeforePopup                  = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean) of object;
+  TOnBeforePopup                  = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; popup_id: Integer; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean) of object;
+  TOnBeforePopupAborted           = procedure(Sender: TObject; const browser: ICefBrowser; popup_id: Integer) of object;
   TOnBeforeDevToolsPopup          = procedure(Sender: TObject; const browser: ICefBrowser; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var use_default_window: boolean) of object;
   TOnAfterCreated                 = procedure(Sender: TObject; const browser: ICefBrowser) of object;
   TOnBeforeClose                  = procedure(Sender: TObject; const browser: ICefBrowser) of object;
@@ -170,6 +171,7 @@ type
 
   // ICefFrameHandler
   TOnFrameCreated                 = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame) of object;
+  TOnFrameDestroyed               = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame) of object;
   TOnFrameAttached                = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; reattached: boolean) of object;
   TOnFrameDetached                = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame) of object;
   TOnMainFrameChanged             = procedure(Sender: TObject; const browser: ICefBrowser; const old_frame, new_frame: ICefFrame) of object;

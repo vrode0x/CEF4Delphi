@@ -75,6 +75,8 @@ type
     property  BrowserTabCount : integer    read GetBrowserTabCount;
 
   public
+    procedure AddTab(const aURL : ustring = '');
+
     function  DoOnBeforePopup(var windowInfo : TCefWindowInfo; var client : ICefClient; const targetFrameName : string; const popupFeatures : TCefPopupFeatures; targetDisposition : TCefWindowOpenDisposition) : boolean;
     function  DoOpenUrlFromTab(const targetUrl : string; targetDisposition : TCefWindowOpenDisposition) : boolean;
   end;
@@ -106,13 +108,10 @@ implementation
 // TBrowserFrame has all the usual code to close CEF4Delphi browsers following
 // a similar destruction sequence than the MiniBrowser demo :
 //
-// 1. TBrowserTab.CloseBrowser calls TChromium.CloseBrowser which triggers the
-//    TChromium.OnClose event.
-// 2. TChromium.OnClose sends a CEF_DESTROY message to destroy CEFWindowParent1
-//    in the main thread, which triggers the TChromium.OnBeforeClose event.
-// 3. TChromium.OnBeforeClose executes the TBrowserFrame.OnBrowserDestroyed
-//    event which will be used in TBrowserTab to send a CEF_DESTROYTAB message
-//    to the main form to free the tab.
+// 1. TBrowserFrame.FormCloseQuery sets CanClose to FALSE, destroys CEFWindowParent1
+//    and calls TChromium.CloseBrowser which triggers the TChromium.OnBeforeClose event.
+// 2. TChromium.OnBeforeClose sets FCanClose := True and sends a CEF_DESTROYTAB
+//    message with the TabID to the main form.
 
 // This demo also uses custom forms to open popup browsers in the same way as
 // the PopupBrowser2 demo. Please, read the code comments in that demo for all
@@ -153,12 +152,41 @@ begin
     PostMessage(MainForm.Handle, CEF_INITIALIZED, 0, 0);
 end;
 
+procedure GlobalCEFApp_OnAlreadyRunningAppRelaunch(const commandLine: ICefCommandLine; const current_directory: ustring; var aResult: boolean);
+var
+  TempURL : ustring;
+begin
+  if assigned(commandLine) and commandLine.IsValid then
+    begin
+      // Lets pretend the second application instance was executed with the
+      // following command line :
+      //     TabbedBrowser2.exe --url=https://www.example.com
+      //
+      // We read the switch value and store it in a normal string.
+      TempURL := commandLine.GetSwitchValue('url');
+
+      // This event is executed in the CEF UI thread and the VCL is not
+      // thread-safe so we have to use TThread.Queue if we want to add VCL
+      // controls safely.
+      TThread.Queue(nil,
+        procedure
+        begin
+          MainForm.AddTab(TempURL);
+        end);
+
+      // The relaunch was handled correctly so we return true.
+      aResult := True;
+    end;
+end;
+
 procedure CreateGlobalCEFApp;
 begin
-  GlobalCEFApp                      := TCefApplication.Create;
-  GlobalCEFApp.cache                := 'cache';
-  GlobalCEFApp.EnablePrintPreview   := True;
-  GlobalCEFApp.OnContextInitialized := GlobalCEFApp_OnContextInitialized;
+  GlobalCEFApp                             := TCefApplication.Create;
+  GlobalCEFApp.RootCache                   := 'RootCache';
+  GlobalCEFApp.cache                       := 'RootCache\cache';
+  GlobalCEFApp.EnablePrintPreview          := True;
+  GlobalCEFApp.OnContextInitialized        := GlobalCEFApp_OnContextInitialized;
+  GlobalCEFApp.OnAlreadyRunningAppRelaunch := GlobalCEFApp_OnAlreadyRunningAppRelaunch;
 end;
 
 procedure TMainForm.EnableButtonPnl;
@@ -208,7 +236,6 @@ begin
   while (i >= 0) do
     begin
       // Only count the fully initialized browser tabs and not the one waiting to be used.
-
       if TBrowserTab(BrowserPageCtrl.Pages[i]).Initialized then
         inc(Result);
 
@@ -217,6 +244,11 @@ begin
 end;
 
 procedure TMainForm.AddTabBtnClick(Sender: TObject);
+begin
+  AddTab;
+end;
+
+procedure TMainForm.AddTab(const aURL : ustring);
 var
   TempNewTab : TBrowserTab;
 begin
@@ -225,7 +257,10 @@ begin
 
   BrowserPageCtrl.ActivePageIndex := pred(BrowserPageCtrl.PageCount);
 
-  TempNewTab.CreateBrowser(HOMEPAGE_URL);
+  if (length(aURL) = 0) then
+    TempNewTab.CreateBrowser(HOMEPAGE_URL)
+   else
+    TempNewTab.CreateBrowser(aURL);
 end;
 
 procedure TMainForm.CEFInitializedMsg(var aMessage : TMessage);

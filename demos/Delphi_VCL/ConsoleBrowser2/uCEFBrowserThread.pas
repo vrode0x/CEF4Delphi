@@ -52,7 +52,7 @@ type
       procedure Browser_OnGetScreenInfo(Sender: TObject; const browser: ICefBrowser; var screenInfo: TCefScreenInfo; out Result: Boolean);
       procedure Browser_OnPopupShow(Sender: TObject; const browser: ICefBrowser; show: Boolean);
       procedure Browser_OnPopupSize(Sender: TObject; const browser: ICefBrowser; const rect: PCefRect);
-      procedure Browser_OnBeforePopup(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean);
+      procedure Browser_OnBeforePopup(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; popup_id: Integer; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean);
       procedure Browser_OnBeforeClose(Sender: TObject; const browser: ICefBrowser);
       procedure Browser_OnLoadError(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; errorCode: TCefErrorCode; const errorText, failedUrl: ustring);
       procedure Browser_OnLoadingStateChange(Sender: TObject; const browser: ICefBrowser; isLoading, canGoBack, canGoForward: Boolean);
@@ -62,6 +62,7 @@ type
       procedure Resize;
       function  CreateBrowser : boolean;
       procedure CloseBrowser;
+      procedure UpdateSize(aNewWidth, aNewHeight : integer);
       procedure InitError;
       procedure WebpagePostProcessing;
       procedure WebpageError;
@@ -76,6 +77,7 @@ type
       function    CopySnapshot(var aSnapshot : TBitmap) : boolean;
       function    SaveSnapshotToFile(const aPath : ustring) : boolean;
       procedure   LoadUrl(const aURL : ustring);
+      function    UpdateBrowserSize(aNewWidth, aNewHeight : integer): boolean;
 
       property ErrorCode             : integer           read GetErrorCode;
       property ErrorText             : ustring           read GetErrorText             write SetErrorText;
@@ -91,10 +93,11 @@ type
 implementation
 
 const
-  CEF_WEBPAGE_LOADED_MSG   = WM_APP + 1;
-  CEF_WEBPAGE_ERROR_MSG    = WM_APP + 2;
-  CEF_CLOSE_BROWSER_MSG    = WM_APP + 3;
-  CEF_LOAD_PENDING_URL_MSG = WM_APP + 4;
+  CEF_WEBPAGE_LOADED_MSG    = WM_APP + 1;
+  CEF_WEBPAGE_ERROR_MSG     = WM_APP + 2;
+  CEF_CLOSE_BROWSER_MSG     = WM_APP + 3;
+  CEF_LOAD_PENDING_URL_MSG  = WM_APP + 4;
+  CEF_UPDATEBROWSERSIZE_MSG = WM_APP + 5;
 
 constructor TCEFBrowserThread.Create(const aDefaultURL : ustring; aWidth, aHeight, aDelayMs : integer; const aScreenScale : single);
 begin
@@ -317,6 +320,12 @@ begin
             PostThreadMessage(ThreadID, CEF_CLOSE_BROWSER_MSG, 0, 0);
 end;
 
+function TCEFBrowserThread.UpdateBrowserSize(aNewWidth, aNewHeight : integer): boolean;
+begin
+  Result := Initialized and
+            PostThreadMessage(ThreadID, CEF_UPDATEBROWSERSIZE_MSG, WPARAM(aNewWidth), LPARAM(aNewHeight));
+end;
+
 procedure TCEFBrowserThread.Browser_OnAfterCreated(Sender: TObject; const browser: ICefBrowser);
 begin
   if assigned(FBrowserInfoCS) then
@@ -343,7 +352,7 @@ begin
       FResizeCS.Acquire;
       TempForcedResize := False;
 
-      if FBrowserBitmap.BeginBufferDraw then
+      if FBrowserBitmap.BeginDraw then
         begin
           if (kind = PET_POPUP) then
             begin
@@ -367,7 +376,7 @@ begin
             end
            else
             begin
-              TempForcedResize := FBrowserBitmap.UpdateBufferDimensions(aWidth, aHeight) or not(FBrowserBitmap.BufferIsResized(False));
+              TempForcedResize := FBrowserBitmap.UpdateDimensions(aWidth, aHeight);
               TempWidth        := FBrowserBitmap.Width;
               TempHeight       := FBrowserBitmap.Height;
               TempScanlineSize := FBrowserBitmap.ScanlineSize;
@@ -423,7 +432,7 @@ begin
                 end;
             end;
 
-          FBrowserBitmap.EndBufferDraw;
+          FBrowserBitmap.EndDraw;
 
           if (kind = PET_VIEW) then
             begin
@@ -496,7 +505,7 @@ begin
   FPopUpRect.Bottom := rect.y + rect.height - 1;
 end;
 
-procedure TCEFBrowserThread.Browser_OnBeforePopup(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean);
+procedure TCEFBrowserThread.Browser_OnBeforePopup(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; popup_id: Integer; const targetUrl, targetFrameName: ustring; targetDisposition: TCefWindowOpenDisposition; userGesture: Boolean; const popupFeatures: TCefPopupFeatures; var windowInfo: TCefWindowInfo; var client: ICefClient; var settings: TCefBrowserSettings; var extra_info: ICefDictionaryValue; var noJavascriptAccess: Boolean; var Result: Boolean);
 begin
   // For simplicity, this demo blocks all popup windows and new tabs
   Result := (targetDisposition in [CEF_WOD_NEW_FOREGROUND_TAB, CEF_WOD_NEW_BACKGROUND_TAB, CEF_WOD_NEW_POPUP, CEF_WOD_NEW_WINDOW]);
@@ -540,13 +549,10 @@ begin
       if FResizing then
         FPendingResize := True
        else
-        if FBrowserBitmap.BufferIsResized then
-          FBrowser.Invalidate(PET_VIEW)
-         else
-          begin
-            FResizing := True;
-            FBrowser.WasResized;
-          end;
+        begin
+          FResizing := True;
+          FBrowser.WasResized;
+        end;
     finally
       FResizeCS.Release;
     end;
@@ -612,6 +618,36 @@ begin
     end;
 end;
 
+procedure TCEFBrowserThread.UpdateSize(aNewWidth, aNewHeight : integer);
+begin
+  if assigned(FResizeCS) then
+    try
+      FResizeCS.Acquire;
+
+      if assigned(FBrowserBitmap) and
+         FBrowserBitmap.BeginDraw then
+        try
+          if (FBrowserBitmap.Width  <> aNewWidth) or
+             (FBrowserBitmap.Height <> aNewHeight) then
+            begin
+              {$IFDEF DELPHI16_UP}
+              FBrowserBitmap.SetSize(aNewWidth, aNewHeight);
+              {$ELSE}
+              FBrowserBitmap.Width  := aNewWidth;
+              FBrowserBitmap.Height := aNewHeight;
+              {$ENDIF}
+
+              FResizing := True;
+              FBrowser.WasResized;
+            end;
+        finally
+          FBrowserBitmap.EndDraw;
+        end;
+    finally
+      FResizeCS.Release;
+    end;
+end;
+
 procedure TCEFBrowserThread.DoOnError;
 begin
   FOnError(self);
@@ -645,12 +681,13 @@ begin
       while TempCont and GetMessage(TempMsg, 0, 0, 0) and not(Terminated) do
         begin
           case TempMsg.Message of
-            CEF_PENDINGRESIZE        : Resize;
-            CEF_CLOSE_BROWSER_MSG    : CloseBrowser;
-            CEF_LOAD_PENDING_URL_MSG : LoadPendingURL;
-            CEF_WEBPAGE_LOADED_MSG   : WebpagePostProcessing;
-            CEF_WEBPAGE_ERROR_MSG    : WebpageError;
-            WM_QUIT                  : TempCont := False;
+            CEF_PENDINGRESIZE         : Resize;
+            CEF_CLOSE_BROWSER_MSG     : CloseBrowser;
+            CEF_LOAD_PENDING_URL_MSG  : LoadPendingURL;
+            CEF_WEBPAGE_LOADED_MSG    : WebpagePostProcessing;
+            CEF_WEBPAGE_ERROR_MSG     : WebpageError;
+            CEF_UPDATEBROWSERSIZE_MSG : UpdateSize(integer(TempMsg.wParam), integer(TempMsg.lParam));
+            WM_QUIT                   : TempCont := False;
           end;
 
           DispatchMessage(TempMsg);

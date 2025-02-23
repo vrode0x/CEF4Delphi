@@ -19,7 +19,9 @@
 <code>type TCefBrowserHost = record</code></p>
 <h2 class="description">Description</h2>
 <p>
- Structure used to represent the browser process aspects of a browser. The functions of this structure can only be called in the browser process. They may be called on any thread in that process unless otherwise indicated in the comments. </p>
+ Structure used to represent the browser process aspects of a browser. The functions of this structure can only be called in the browser process. They may be called on any thread in that process unless otherwise indicated in the comments.
+
+<p>NOTE: This struct is allocated DLL-side. </p>
 <p>
 
 
@@ -47,15 +49,23 @@
 </tr>
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#set_focus">set_focus</a></strong>: procedure(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>; focus: Integer); stdcall;</code></td>
+<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#is_ready_to_be_closed">is_ready_to_be_closed</a></strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): Integer; stdcall;</code></td>
 </tr>
 <tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#get_window_handle">get_window_handle</a></strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): <a href="uCEFTypes.html#TCefWindowHandle">TCefWindowHandle</a>; stdcall;</code></td>
+<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#set_focus">set_focus</a></strong>: procedure(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>; focus: Integer); stdcall;</code></td>
 </tr>
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#get_window_handle">get_window_handle</a></strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): <a href="uCEFTypes.html#TCefWindowHandle">TCefWindowHandle</a>; stdcall;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#get_opener_window_handle">get_opener_window_handle</a></strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): <a href="uCEFTypes.html#TCefWindowHandle">TCefWindowHandle</a>; stdcall;</code></td>
+</tr>
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="uCEFTypes.TCefBrowserHost.html#get_opener_identifier">get_opener_identifier</a></strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): Integer; stdcall;</code></td>
 </tr>
 <tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
@@ -335,6 +345,14 @@
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="is_ready_to_be_closed"></span><code><strong>is_ready_to_be_closed</strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): Integer; stdcall;</code></td>
+</tr>
+<tr><td colspan="2">
+<p class="nodescription">This item has no description.</p></td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><span id="set_focus"></span><code><strong>set_focus</strong>: procedure(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>; focus: Integer); stdcall;</code></td>
 </tr>
 <tr><td colspan="2">
@@ -352,6 +370,14 @@
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><span id="get_opener_window_handle"></span><code><strong>get_opener_window_handle</strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): <a href="uCEFTypes.html#TCefWindowHandle">TCefWindowHandle</a>; stdcall;</code></td>
+</tr>
+<tr><td colspan="2">
+<p class="nodescription">This item has no description.</p></td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="get_opener_identifier"></span><code><strong>get_opener_identifier</strong>: function(self: <a href="uCEFTypes.html#PCefBrowserHost">PCefBrowserHost</a>): Integer; stdcall;</code></td>
 </tr>
 <tr><td colspan="2">
 <p class="nodescription">This item has no description.</p></td></tr>
