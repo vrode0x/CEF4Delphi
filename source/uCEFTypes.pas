@@ -34,6 +34,7 @@ type
   PCefBinaryValue = ^TCefBinaryValue;
   PCefSchemeRegistrar = ^TCefSchemeRegistrar;
   PCefPreferenceRegistrar = ^TCefPreferenceRegistrar;
+  PCefPreferenceObserver = ^TCefPreferenceObserver;
   PCefPreferenceManager = ^TCefPreferenceManager;
   PCefCommandLine = ^TCefCommandLine;
   PCefCommandHandler = ^TCefCommandHandler;
@@ -140,6 +141,7 @@ type
   PCefSSLStatus = ^TCefSSLStatus;
   PCefSelectClientCertificateCallback = ^TCefSelectClientCertificateCallback;
   PCefCallback = ^TCefCallback;
+  PCefSettingObserver = ^TCefSettingObserver;
   PCefCookie = ^TCefCookie;
   PCefRequestContext = ^TCefRequestContext;
   PCefRequestContextHandler = ^TCefRequestContextHandler;
@@ -422,6 +424,59 @@ type
     /// </summary>
     fd      : integer;
   end;
+
+  /// <summary>
+  /// Specifies which encryption storage backend to use in Linux.
+  /// </summary>
+  /// <remarks>
+  /// <para><see href="https://source.chromium.org/chromium/chromium/src/+/main:docs/linux/password_storage.md">Chromium document: docs/linux/password_storage.md</see></para>
+  /// </remarks>
+  TCefPasswordStorage = (
+    /// <summary>
+    /// Chromium chooses which store to use automatically, based on your desktop environment.
+    /// </summary>
+    psDefault,
+    /// <summary>
+    /// GNOME Libsecret.
+    /// </summary>
+    psGnomeLibsecret,
+    /// <summary>
+    /// KWallet 4.
+    /// </summary>
+    psKWallet,
+    /// <summary>
+    /// KWallet 5.
+    /// </summary>
+    psKWallet5,
+    /// <summary>
+    /// KWallet 6.
+    /// </summary>
+    psKWallet6,
+    /// <summary>
+    /// Plain text.
+    /// </summary>
+    psBasic);
+
+  /// <summary>
+  /// Preferred GTK version loaded by Chromium.
+  /// </summary>
+  /// <remarks>
+  /// <para><see href="https://github.com/chromium/chromium/blob/main/ui/gtk/gtk_compat.cc">See the LoadGtkImpl function in ui/gtk/gtk_compat.cc</see></para>
+  /// </remarks>
+  TCefGTKVersion = (
+    /// <summary>
+    /// Chromium tries to load the default GTK version.
+    /// </summary>
+    gtkVersionDefault,   
+    /// <summary>
+    /// Chromium tries to load GTK 3 first.
+    /// </summary>
+    gtkVersion3, 
+    /// <summary>
+    /// Chromium tries to load GTK 4 first.
+    /// </summary>
+    gtkVersion4
+  );
   {$ENDIF}
 
   /// <summary>
@@ -1724,7 +1779,7 @@ type
     PDE_TYPE_EMPTY  = 0,
     PDE_TYPE_BYTES,
     PDE_TYPE_FILE,
-    PDF_TYPE_NUM_VALUES
+    PDE_TYPE_NUM_VALUES
   );
 
   /// <summary>
@@ -3340,6 +3395,7 @@ type
     CEF_CPAIT_DISCOUNTS,
     CEF_CPAIT_OPTIMIZATION_GUIDE,
     CEF_CPAIT_COLLABORATION_MESSAGING, {* CEF_API_ADDED(13304) *}
+    CEF_CPAIT_CHANGE_PASSWORD,         {* CEF_API_ADDED(13400) *}
     CEF_CPAIT_NUM_VALUES
   );
 
@@ -3517,8 +3573,8 @@ type
   /// </remarks>
   TCefChromeToolbarButtonType = (
     CEF_CTBT_CAST,
-    CEF_CTBT_DOWNLOAD,
-    CEF_CTBT_SEND_TAB_TO_SELF,
+    CEF_CTBT_DOWNLOAD_DEPRECATED,
+    CEF_CTBT_SEND_TAB_TO_SELF_DEPRECATED,
     CEF_CTBT_SIDE_PANEL,
     CEF_CTBT_NUM_VALUES
   );
@@ -5237,7 +5293,7 @@ type
     /// </summary>
     CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS,
     /// <summary>
-    /// Website setting which is used for UnusedSitePermissionsService to
+    /// Website setting which is used for RevokedPermissionsService to
     /// store revoked permissions of unused sites from unused site permissions
     /// feature.
     /// </summary>
@@ -5309,7 +5365,7 @@ type
     /// not blocked otherwise).</para>
     /// <para>BLOCK: third-party cookies blocked, but 3PCD mitigations enabled.</para>
     /// </summary>
-    CEF_CONTENT_SETTING_TOP_LEVEL_TPCD_ORIGIN_TRIAL,
+    CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_TPCD_ORIGIN_TRIAL,
     /// <summary>
     /// Content setting used to indicate whether entering picture-in-picture
     /// automatically should be enabled.
@@ -5372,7 +5428,7 @@ type
     /// </summary>
     CEF_CONTENT_SETTING_TYPE_POINTER_LOCK,
     /// <summary>
-    /// Website setting which is used for UnusedSitePermissionsService to store
+    /// Website setting which is used for RevokedPermissionsService to store
     /// auto-revoked notification permissions from abusive sites.
     /// </summary>
     CEF_CONTENT_SETTING_TYPE_REVOKED_ABUSIVE_NOTIFICATION_PERMISSIONS,
@@ -5430,7 +5486,25 @@ type
     /// or legacy behavior.
     /// </summary>
     CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_SCOPE,
-
+    /// <summary>
+    /// Website setting to indicate whether the user has allowlisted suspicious
+    /// notifications for the origin.
+    /// </summary>
+    CEF_CONTENT_SETTING_TYPE_ARE_SUSPICIOUS_NOTIFICATIONS_ALLOWLISTED_BY_USER,   {* CEF_API_ADDED(13400) *}
+    /// <summary>
+    /// Content settings for access to the Controlled Frame API.
+    /// </summary>
+    CEF_CONTENT_SETTING_TYPE_CONTROLLED_FRAME,                                   {* CEF_API_ADDED(13400) *}
+    /// <summary>
+    /// Website setting which is used for RevokedPermissionsService to
+    /// store revoked notification permissions of disruptive sites.
+    /// </summary>
+    CEF_CONTENT_SETTING_TYPE_REVOKED_DISRUPTIVE_NOTIFICATION_PERMISSIONS,        {* CEF_API_ADDED(13500) *}
+    /// <summary>
+    /// Content setting for whether the site is allowed to make local network
+    /// requests.
+    /// </summary>
+    CEF_CONTENT_SETTING_TYPE_LOCAL_NETWORK_ACCESS,                               {* CEF_API_ADDED(13600) *}
     CEF_CONTENT_SETTING_TYPE_NUM_VALUES
   );
 
@@ -5658,18 +5732,20 @@ type
   /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_display_handler_capi.h">CEF source file: /include/capi/cef_display_handler_capi.h (cef_display_handler_t)</see></para>
   /// </remarks>
   TCefDisplayHandler = record
-    base                       : TCefBaseRefCounted;
-    on_address_change          : procedure(self: PCefDisplayHandler; browser: PCefBrowser; frame: PCefFrame; const url: PCefString); stdcall;
-    on_title_change            : procedure(self: PCefDisplayHandler; browser: PCefBrowser; const title: PCefString); stdcall;
-    on_favicon_urlchange       : procedure(self: PCefDisplayHandler; browser: PCefBrowser; icon_urls: TCefStringList); stdcall;
-    on_fullscreen_mode_change  : procedure(self: PCefDisplayHandler; browser: PCefBrowser; fullscreen: Integer); stdcall;
-    on_tooltip                 : function(self: PCefDisplayHandler; browser: PCefBrowser; text: PCefString): Integer; stdcall;
-    on_status_message          : procedure(self: PCefDisplayHandler; browser: PCefBrowser; const value: PCefString); stdcall;
-    on_console_message         : function(self: PCefDisplayHandler; browser: PCefBrowser; level: TCefLogSeverity; const message_, source: PCefString; line: Integer): Integer; stdcall;
-    on_auto_resize             : function(self: PCefDisplayHandler; browser: PCefBrowser; const new_size: PCefSize): Integer; stdcall;
-    on_loading_progress_change : procedure(self: PCefDisplayHandler; browser: PCefBrowser; progress: double); stdcall;
-    on_cursor_change           : function(self: PCefDisplayHandler; browser: PCefBrowser; cursor: TCefCursorHandle; type_: TCefCursorType; const custom_cursor_info: PCefCursorInfo): Integer; stdcall;
-    on_media_access_change     : procedure(self: PCefDisplayHandler; browser: PCefBrowser; has_video_access, has_audio_access: integer); stdcall;
+    base                         : TCefBaseRefCounted;
+    on_address_change            : procedure(self: PCefDisplayHandler; browser: PCefBrowser; frame: PCefFrame; const url: PCefString); stdcall;
+    on_title_change              : procedure(self: PCefDisplayHandler; browser: PCefBrowser; const title: PCefString); stdcall;
+    on_favicon_urlchange         : procedure(self: PCefDisplayHandler; browser: PCefBrowser; icon_urls: TCefStringList); stdcall;
+    on_fullscreen_mode_change    : procedure(self: PCefDisplayHandler; browser: PCefBrowser; fullscreen: Integer); stdcall;
+    on_tooltip                   : function(self: PCefDisplayHandler; browser: PCefBrowser; text: PCefString): Integer; stdcall;
+    on_status_message            : procedure(self: PCefDisplayHandler; browser: PCefBrowser; const value: PCefString); stdcall;
+    on_console_message           : function(self: PCefDisplayHandler; browser: PCefBrowser; level: TCefLogSeverity; const message_, source: PCefString; line: Integer): Integer; stdcall;
+    on_auto_resize               : function(self: PCefDisplayHandler; browser: PCefBrowser; const new_size: PCefSize): Integer; stdcall;
+    on_loading_progress_change   : procedure(self: PCefDisplayHandler; browser: PCefBrowser; progress: double); stdcall;
+    on_cursor_change             : function(self: PCefDisplayHandler; browser: PCefBrowser; cursor: TCefCursorHandle; type_: TCefCursorType; const custom_cursor_info: PCefCursorInfo): Integer; stdcall;
+    on_media_access_change       : procedure(self: PCefDisplayHandler; browser: PCefBrowser; has_video_access, has_audio_access: integer); stdcall;
+    on_contents_bounds_change    : function(self: PCefDisplayHandler; browser: PCefBrowser; const new_bounds: PCefRect): integer; stdcall;  {* CEF_API_ADDED(13700) *}
+    get_root_window_screen_rect  : function(self: PCefDisplayHandler; browser: PCefBrowser; rect: PCefRect): integer; stdcall;  {* CEF_API_ADDED(13700) *}
   end;
 
   /// <summary>
@@ -6054,6 +6130,23 @@ type
   end;
 
   /// <summary>
+  /// Implemented by the client to observe preference changes and registered via
+  /// cef_preference_manager_t::AddPreferenceObserver. The functions of this
+  /// structure will be called on the browser process UI thread.
+  ///
+  /// NOTE: This struct is allocated client-side.
+  /// </summary>
+  /// <remarks>
+  /// <para>Implemented by ICefPreferenceObserver.</para>
+  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_observer_t)</see></para>
+  /// </remarks>
+  {* CEF_API_ADDED(13401) *}
+  TCefPreferenceObserver = record
+    base                    : TCefBaseRefCounted;
+    on_preference_changed   : procedure(self: PCefPreferenceObserver; const name: PCefString); stdcall;
+  end;
+
+  /// <summary>
   /// Manage access to preferences. Many built-in preferences are registered by
   /// Chromium. Custom preferences can be registered in
   /// ICefBrowserProcessHandler.OnRegisterCustomPreferences.
@@ -6071,6 +6164,7 @@ type
     get_all_preferences             : function(self: PCefPreferenceManager; include_defaults: Integer): PCefDictionaryValue; stdcall;
     can_set_preference              : function(self: PCefPreferenceManager; const name: PCefString): Integer; stdcall;
     set_preference                  : function(self: PCefPreferenceManager; const name: PCefString; value: PCefValue; error: PCefString): Integer; stdcall;
+    add_preference_observer         : function(self: PCefPreferenceManager; const name: PCefString; observer: PCefPreferenceObserver): PCefRegistration; stdcall; {* CEF_API_ADDED(13401) *}
   end;
 
   /// <summary>
@@ -6743,6 +6837,23 @@ type
   end;
 
   /// <summary>
+  /// Implemented by the client to observe content and website setting changes and
+  /// registered via cef_request_context_t::AddSettingObserver. The functions of
+  /// this structure will be called on the browser process UI thread.
+  ///
+  /// NOTE: This struct is allocated client-side.
+  /// </summary>
+  /// <remarks>
+  /// <para>Implemented by ICefSettingObserver.</para>
+  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_capi.h">CEF source file: /include/capi/cef_request_context_capi.h (cef_setting_observer_t)</see></para>
+  /// </remarks>
+  {* CEF_API_ADDED(13401) *}
+  TCefSettingObserver = record
+    base                : TCefBaseRefCounted;
+    on_setting_changed  : procedure(self: PCefSettingObserver; const requesting_url, top_level_url: PCefString; content_type: TCefContentSettingTypes); stdcall;
+  end;
+
+  /// <summary>
   /// A request context provides request handling for a set of related browser or
   /// URL request objects. A request context can be specified when creating a new
   /// browser via the ICefBrowserHost static factory functions or when creating
@@ -6787,6 +6898,7 @@ type
     get_chrome_color_scheme_mode    : function(self: PCefRequestContext): TCefColorVariant; stdcall;
     get_chrome_color_scheme_color   : function(self: PCefRequestContext): TCefColor; stdcall;
     get_chrome_color_scheme_variant : function(self: PCefRequestContext): TCefColorVariant; stdcall;
+    add_setting_observer            : function(self: PCefRequestContext; observer: PCefSettingObserver): PCefRegistration; stdcall;   {* CEF_API_ADDED(13401) *}
   end;
 
   /// <summary>
@@ -8812,6 +8924,7 @@ type
     use_frameless_window_for_picture_in_picture : function(self: PCefBrowserViewDelegate; browser_view: PCefBrowserView): integer; stdcall;
     on_gesture_command                          : function(self: PCefBrowserViewDelegate; browser_view: PCefBrowserView; gesture_command: TCefGestureCommand): Integer; stdcall;
     get_browser_runtime_style                   : function(self: PCefBrowserViewDelegate): TCefRuntimeStyle; stdcall;
+    allow_move_for_picture_in_picture           : function(self: PCefBrowserViewDelegate; browser_view: PCefBrowserView): integer; stdcall; {* CEF_API_ADDED(13601) *}
   end;
 
   /// <summary>

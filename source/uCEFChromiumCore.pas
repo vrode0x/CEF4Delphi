@@ -30,7 +30,8 @@ uses
   {$IFDEF MSWINDOWS}uCEFDragAndDropMgr,{$ENDIF}
   {$IFDEF LINUX}uCEFLinuxTypes, uCEFLinuxFunctions,{$ENDIF}
   uCEFChromiumOptions, uCEFChromiumFontOptions, uCEFPDFPrintOptions,
-  uCEFBrowserViewComponent, uCEFWindowInfoWrapper;
+  uCEFBrowserViewComponent, uCEFWindowInfoWrapper, uCEFPreferenceObserver,
+  uCEFSettingObserver;
 
 type
   TBrowserInfoList = class;
@@ -55,6 +56,10 @@ type
       FMediaObserverReg         : ICefRegistration;
       FDevToolsMsgObserver      : ICefDevToolsMessageObserver;
       FDevToolsMsgObserverReg   : ICefRegistration;
+      FSettingObserver          : ICefSettingObserver;
+      FSettingObserverReg       : ICefRegistration;
+      FPreferenceInfoList       : TPreferenceInfoList;
+      FPreferenceInfoCS         : TCriticalSection;
       FDefaultUrl               : ustring;
       FOptions                  : TChromiumOptions;
       FFontOptions              : TChromiumFontOptions;
@@ -119,6 +124,10 @@ type
       FCredentialsService       : TCefState;
       FAutofillCreditCard       : TCefState;
       FAutofillProfile          : TCefState;
+      FAutofillSaveData         : TCefState;
+      FCanMakePayment           : TCefState;
+      FSearchSuggestEnabled     : TCefState;
+      FURLDataCollection        : TCefState;
       FTryingToCloseBrowser     : boolean;
 
       {$IFDEF LINUX}
@@ -173,6 +182,8 @@ type
       FOnLoadingProgressChange        : TOnLoadingProgressChange;
       FOnCursorChange                 : TOnCursorChange;
       FOnMediaAccessChange            : TOnMediaAccessChange;
+      FOnContentsBoundsChange         : TOnContentsBoundsChange;
+      FOnGetRootWindowScreenRect      : TOnGetRootWindowScreenRect;
 
       // ICefDownloadHandler
       FOnCanDownload                  : TOnCanDownloadEvent;
@@ -297,11 +308,16 @@ type
       FOnIsChromePageActionIconVisible    : TOnIsChromePageActionIconVisibleEvent;
       FOnIsChromeToolbarButtonVisible     : TOnIsChromeToolbarButtonVisibleEvent;
 
-
       // ICefPermissionHandler
       FOnRequestMediaAccessPermission     : TOnRequestMediaAccessPermissionEvent;
       FOnShowPermissionPrompt             : TOnShowPermissionPromptEvent;
       FOnDismissPermissionPrompt          : TOnDismissPermissionPromptEvent;
+
+      // ICefPreferenceObserver
+      FOnPreferenceChanged                : TOnPreferenceChangedEvent;
+
+      // ICefSettingObserver
+      FOnSettingChanged                   : TOnSettingChangedEvent;
 
       // Custom
       FOnTextResultAvailable              : TOnTextResultAvailableEvent;
@@ -437,11 +453,15 @@ type
       procedure DestroyResourceRequestHandler;
       procedure DestroyMediaObserver;
       procedure DestroyDevToolsMsgObserver;
+      procedure DestroySettingObserver;
+      procedure DestroyPreferenceObserver;
       procedure DestroyAllHandlersAndObservers;
 
       procedure CreateResourceRequestHandler; virtual;
       procedure CreateMediaObserver; virtual;
       procedure CreateDevToolsMsgObserver; virtual;
+      procedure CreateSettingObserver; virtual;
+      procedure CreatePreferenceObserver; virtual;
       procedure CreateRequestContextHandler; virtual;
       procedure CreateOptionsClasses; virtual;
       procedure CreateSyncObjects; virtual;
@@ -540,6 +560,8 @@ type
       procedure doOnLoadingProgressChange(const browser: ICefBrowser; const progress: double); virtual;
       procedure doOnCursorChange(const browser: ICefBrowser; cursor_: TCefCursorHandle; cursorType: TCefCursorType; const customCursorInfo: PCefCursorInfo; var aResult : boolean); virtual;
       procedure doOnMediaAccessChange(const browser: ICefBrowser; has_video_access, has_audio_access: boolean); virtual;
+      function  doOnContentsBoundsChange(const browser: ICefBrowser; const new_bounds: PCefRect): Boolean; virtual;
+      function  doOnGetRootWindowScreenRect(const browser: ICefBrowser; rect_: PCefRect): Boolean; virtual;
 
       // ICefDownloadHandler
       function  doOnCanDownload(const browser: ICefBrowser; const url, request_method: ustring): boolean;
@@ -666,6 +688,12 @@ type
       function  doOnShowPermissionPrompt(const browser: ICefBrowser; prompt_id: uint64; const requesting_origin: ustring; requested_permissions: cardinal; const callback: ICefPermissionPromptCallback): boolean;
       procedure doOnDismissPermissionPrompt(const browser: ICefBrowser; prompt_id: uint64; result: TCefPermissionRequestResult);
 
+      // ICefPreferenceObserver
+      procedure doOnPreferenceChanged(const name_: ustring);
+
+      // ICefSettingObserver
+      procedure doOnSettingChanged(const requesting_url, top_level_url : ustring; content_type: TCefContentSettingTypes);
+
       // Custom
       procedure GetSettings(var aSettings : TCefBrowserSettings);
       procedure doCookiesDeleted(numDeleted : integer); virtual;
@@ -698,10 +726,12 @@ type
       procedure doToggleAudioMuted; virtual;
       procedure doEnableFocus; virtual;
       function  doTryCloseBrowser : boolean; virtual;
+      procedure doAddPreferenceObserver(const name_ : ustring); virtual;
 
       function  MustCreateAudioHandler : boolean; virtual;
       function  MustCreateCommandHandler : boolean; virtual;
       function  MustCreateDevToolsMessageObserver : boolean; virtual;
+      function  MustCreateSettingObserver : boolean; virtual;
       function  MustCreateLoadHandler : boolean; virtual;
       function  MustCreateFocusHandler : boolean; virtual;
       function  MustCreateContextMenuHandler : boolean; virtual;
@@ -1117,6 +1147,25 @@ type
       /// </summary>
       procedure   ToggleAudioMuted;
       /// <summary>
+      /// Add an observer for preference changes. |name| is the name of the
+      /// preference to observe. If |name| is NULL then all preferences will be
+      /// observed. Observing all preferences has performance consequences and is
+      /// not recommended outside of testing scenarios. The observer will remain
+      /// registered until the returned Registration object is destroyed. This
+      /// function must be called on the browser process UI thread.
+      /// </summary>
+      /// <remarks>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_manager_t)</see></para>
+      /// </remarks>
+      procedure   AddPreferenceObserver(const name_: ustring);
+      /// <summary>
+      /// Remove an observer for preference changes.
+      /// </summary>
+      /// <remarks>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_manager_t)</see></para>
+      /// </remarks>
+      procedure   RemovePreferenceObserver(const name_ : ustring);
+      /// <summary>
       /// Used to delete cookies immediately or asynchronously. If aDeleteImmediately is false TChromiumCore.DeleteCookies triggers
       /// the TChromiumCore.OnCookiesDeleted event when the cookies are deleted.
       /// </summary>
@@ -1217,6 +1266,15 @@ type
       /// documentation for additional usage information.
       /// </summary>
       function    AddDevToolsMessageObserver(const observer: ICefDevToolsMessageObserver): ICefRegistration;
+      /// <summary>
+      /// Add an observer for content and website setting changes. The observer will
+      /// remain registered until the returned Registration object is destroyed.
+      /// This function must be called on the browser process UI thread.
+      /// </summary>
+      /// <remarks>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_capi.h">CEF source file: /include/capi/cef_request_context_capi.h (cef_request_context_t)</see></para>
+      /// </remarks>
+      function    AddSettingObserver(const observer: ICefSettingObserver): ICefRegistration;
       /// <summary>
       /// <para>Search for |searchText|. |forward| indicates whether to search forward or
       /// backward within the page. |matchCase| indicates whether the search should
@@ -1339,12 +1397,26 @@ type
       /// </summary>
       procedure   WasHidden(hidden: Boolean);
       /// <summary>
-      /// Send a notification to the browser that the screen info has changed. The
-      /// browser will then call ICefRenderHandler.GetScreenInfo to update the
-      /// screen information with the new values. This simulates moving the webview
-      /// window from one display to another, or changing the properties of the
-      /// current display. This function is only used when window rendering is
-      /// disabled.
+      /// <para>Notify the browser that screen information has changed. Updated
+      /// information will be sent to the renderer process to configure screen size
+      /// and position values used by CSS and JavaScript (window.deviceScaleFactor,
+      /// window.screenX/Y, window.outerWidth/Height, etc.). For background see
+      /// https://bitbucket.org/chromiumembedded/cef/wiki/GeneralUsage.md#markdown-
+      /// header-coordinate-systems</para>
+      ///
+      /// <para>This function is used with (a) windowless rendering and (b) windowed
+      /// rendering with external (client-provided) root window.</para>
+      ///
+      /// <para>With windowless rendering the browser will trigger
+      /// TChromiumCore.OnGetScreenInfo, TChromiumCore.OnGetRootScreenRect and
+      /// TChromiumCore.OnGetViewRect.
+      /// This simulates moving or resizing the
+      /// root window in the current display, moving the root window from one
+      /// display to another, or changing the properties of the current display.</para>
+      ///
+      /// <para>With windowed rendering the browser will trigger
+      /// TChromiumCore.OnGetRootWindowScreenRect and use the associated
+      /// display properties.</para>
       /// </summary>
       procedure   NotifyScreenInfoChanged;
       /// <summary>
@@ -2106,34 +2178,82 @@ type
       /// <summary>
       /// Proxy type: CEF_PROXYTYPE_DIRECT, CEF_PROXYTYPE_AUTODETECT, CEF_PROXYTYPE_SYSTEM, CEF_PROXYTYPE_FIXED_SERVERS or CEF_PROXYTYPE_PAC_SCRIPT.
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyType                     : integer                      read FProxyType                   write SetProxyType;
       /// <summary>
       /// Proxy scheme
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyScheme                   : TCefProxyScheme              read FProxyScheme                 write SetProxyScheme;
       /// <summary>
       /// Proxy server address
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyServer                   : ustring                      read FProxyServer                 write SetProxyServer;
       /// <summary>
       /// Proxy server port
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyPort                     : integer                      read FProxyPort                   write SetProxyPort;
       /// <summary>
       /// Proxy username
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyUsername                 : ustring                      read FProxyUsername               write SetProxyUsername;
       /// <summary>
       /// Proxy password
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyPassword                 : ustring                      read FProxyPassword               write SetProxyPassword;
       /// <summary>
       /// URL of the PAC script file.
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyScriptURL                : ustring                      read FProxyScriptURL              write SetProxyScriptURL;
       /// <summary>
       /// This tells chromium to bypass any specified proxy for the given semi-colon-separated list of hosts.
       /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
       property  ProxyByPassList               : ustring                      read FProxyByPassList             write SetProxyByPassList;
       /// <summary>
       /// Sets the maximum connections per proxy value in the browser preferences (experimental).
@@ -2169,6 +2289,34 @@ type
       /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
       /// </remarks>
       property AutofillProfile                : TCefState                    read FAutofillProfile             write FAutofillProfile;
+      /// <summary>
+      /// Browser preference used to enable the autofill feature for saving data.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property AutofillSaveData               : TCefState                    read FAutofillSaveData            write FAutofillSaveData;
+      /// <summary>
+      /// Browser preference used to enable saving information about payments.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property CanMakePayment                 : TCefState                    read FCanMakePayment              write FCanMakePayment;
+      /// <summary>
+      /// Browser preference used to enable search suggestions.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property SearchSuggestEnabled           : TCefState                    read FSearchSuggestEnabled        write FSearchSuggestEnabled;
+      /// <summary>
+      /// Browser preference used to enable url keyed anonymized data collection.
+      /// </summary>
+      /// <remarks>
+      /// <para>Disabling this property is a suggested workaround for some autofill crashes in Alloy style.</para>
+      /// </remarks>
+      property URLDataCollection              : TCefState                    read FURLDataCollection           write FURLDataCollection;
 
     published
       /// <summary>
@@ -2537,7 +2685,7 @@ type
       /// <summary>
       /// Called when auto-resize is enabled via
       /// cef_browser_host_t::SetAutoResizeEnabled and the contents have auto-
-      /// resized. |new_size| will be the desired size in view coordinates. Return
+      /// resized. |new_size| will be the desired size in DIP coordinates. Return
       /// true (1) if the resize was handled or false (0) for default handling.
       /// </summary>
       /// <remarks>
@@ -2574,7 +2722,43 @@ type
       /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_display_handler_capi.h">CEF source file: /include/capi/cef_display_handler_capi.h (cef_display_handler_t)</see></para>
       /// </remarks>
       property OnMediaAccessChange              : TOnMediaAccessChange              read FOnMediaAccessChange              write FOnMediaAccessChange;
-
+      /// <summary>
+      /// <para>Called when JavaScript is requesting new bounds via window.moveTo/By() or
+      /// window.resizeTo/By(). |new_bounds| are in DIP screen coordinates.</para>
+      ///
+      /// <para>With Views-hosted browsers |new_bounds| are the desired bounds for the
+      /// containing cef_window_t and may be passed directly to
+      /// ICefWindow.SetBounds. With external (client-provided) parent on macOS
+      /// and Windows |new_bounds| are the desired frame bounds for the containing
+      /// root window. With other non-Views browsers |new_bounds| are the desired
+      /// bounds for the browser content only unless the client implements either
+      /// ICefDisplayHandler.GetRootWindowScreenRect for windowed browsers or
+      /// ICefRenderHandler.GetWindowScreenRect for windowless browsers. Clients
+      /// may expand browser content bounds to window bounds using OS-specific or
+      /// ICefDisplay functions.</para>
+      ///
+      /// <para>Return true (1) if this function was handled or false (0) for default
+      /// handling. Default move/resize behavior is only provided with Views-hosted
+      /// Chrome style browsers.</para>
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_display_handler_capi.h">CEF source file: /include/capi/cef_display_handler_capi.h (cef_display_handler_t)</see></para>
+      /// </remarks>
+      property OnContentsBoundsChange           : TOnContentsBoundsChange           read FOnContentsBoundsChange           write FOnContentsBoundsChange;
+      /// <summary>
+      /// Called to retrieve the external (client-provided) root window rectangle in
+      /// screen DIP coordinates. Only called for windowed browsers on Windows and
+      /// Linux. Return true (1) if the rectangle was provided. Return false (0) to
+      /// use the root window bounds on Windows or the browser content bounds on
+      /// Linux. For additional usage details see
+      /// ICefBrowserHost.NotifyScreenInfoChanged.
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_display_handler_capi.h">CEF source file: /include/capi/cef_display_handler_capi.h (cef_display_handler_t)</see></para>
+      /// </remarks>
+      property OnGetRootWindowScreenRect        : TOnGetRootWindowScreenRect        read FOnGetRootWindowScreenRect        write FOnGetRootWindowScreenRect;
       /// <summary>
       /// Called before a download begins in response to a user-initiated action
       /// (e.g. alt + link click or link click that returns a `Content-Disposition:
@@ -3961,6 +4145,25 @@ type
       /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_permission_handler_capi.h">CEF source file: /include/capi/cef_permission_handler_capi.h (cef_permission_handler_t)</see></para>
       /// </remarks>
       property OnDismissPermissionPrompt              : TOnDismissPermissionPromptEvent      read FOnDismissPermissionPrompt           write FOnDismissPermissionPrompt;
+      /// <summary>
+      /// Called when a preference has changed. The new value can be retrieved using
+      /// ICefRequestContext.GetPreference.
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_observer_t)</see></para>
+      /// </remarks>
+      property OnPreferenceChanged                    : TOnPreferenceChangedEvent            read FOnPreferenceChanged                 write FOnPreferenceChanged;
+      /// <summary>
+      /// Called when a content or website setting has changed. The new value can be
+      /// retrieved using ICefRequestContext.GetContentSetting or
+      /// ICefRequestContext.GetWebsiteSetting.
+      /// </summary>
+      /// <remarks>
+      /// <para>This event will be called on the browser process CEF UI thread.</para>
+      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_setting_observer_t)</see></para>
+      /// </remarks>
+      property OnSettingChanged                      : TOnSettingChangedEvent                read FOnSettingChanged                    write FOnSettingChanged;
   end;
 
   TBrowserInfo = class
@@ -4075,6 +4278,10 @@ begin
   FMediaObserverReg        := nil;
   FDevToolsMsgObserver     := nil;
   FDevToolsMsgObserverReg  := nil;
+  FSettingObserver         := nil;
+  FSettingObserverReg      := nil;
+  FPreferenceInfoList      := nil;
+  FPreferenceInfoCS        := nil;
   FOptions                 := nil;
   FFontOptions             := nil;
   FDefaultEncoding         := '';
@@ -4114,6 +4321,10 @@ begin
   FCredentialsService      := STATE_DEFAULT;
   FAutofillCreditCard      := STATE_DEFAULT;
   FAutofillProfile         := STATE_DEFAULT;
+  FAutofillSaveData        := STATE_DEFAULT;
+  FCanMakePayment          := STATE_DEFAULT;
+  FSearchSuggestEnabled    := STATE_DEFAULT;
+  FURLDataCollection       := STATE_DEFAULT;
   FTryingToCloseBrowser    := False;
   {$IFDEF LINUX}
   FXDisplay                := nil;
@@ -4188,13 +4399,14 @@ begin
 
       DestroyAllBrowsers;
 
-      if (FWindowInfo      <> nil) then FreeAndNil(FWindowInfo);
-      if (FDevWindowInfo   <> nil) then FreeAndNil(FDevWindowInfo);
-      if (FFontOptions     <> nil) then FreeAndNil(FFontOptions);
-      if (FOptions         <> nil) then FreeAndNil(FOptions);
-      if (FPDFPrintOptions <> nil) then FreeAndNil(FPDFPrintOptions);
-      if (FZoomStepCS      <> nil) then FreeAndNil(FZoomStepCS);
-      if (FBrowsersCS      <> nil) then FreeAndNil(FBrowsersCS);
+      if (FWindowInfo        <> nil) then FreeAndNil(FWindowInfo);
+      if (FDevWindowInfo     <> nil) then FreeAndNil(FDevWindowInfo);
+      if (FFontOptions       <> nil) then FreeAndNil(FFontOptions);
+      if (FOptions           <> nil) then FreeAndNil(FOptions);
+      if (FPDFPrintOptions   <> nil) then FreeAndNil(FPDFPrintOptions);
+      if (FZoomStepCS        <> nil) then FreeAndNil(FZoomStepCS);
+      if (FBrowsersCS        <> nil) then FreeAndNil(FBrowsersCS);
+      if (FPreferenceInfoCS  <> nil) then FreeAndNil(FPreferenceInfoCS);
     except
       on e : exception do
         if CustomExceptionHandler('TChromiumCore.Destroy', e) then raise;
@@ -4391,8 +4603,22 @@ begin
   FDevToolsMsgObserver    := nil;
 end;
 
+procedure TChromiumCore.DestroySettingObserver;
+begin
+  FSettingObserverReg := nil;
+  FSettingObserver    := nil;
+end;
+
+procedure TChromiumCore.DestroyPreferenceObserver;
+begin
+  if (FPreferenceInfoList <> nil) then
+    FreeAndNil(FPreferenceInfoList);
+end;
+
 procedure TChromiumCore.DestroyAllHandlersAndObservers;
 begin
+  DestroySettingObserver;
+  DestroyPreferenceObserver;
   DestroyDevToolsMsgObserver;
   DestroyMediaObserver;
   DestroyResourceRequestHandler;
@@ -4412,6 +4638,19 @@ begin
   if MustCreateDevToolsMessageObserver and
      (FDevToolsMsgObserver = nil) then
     FDevToolsMsgObserver := TCustomDevToolsMessageObserver.Create(self);
+end;
+
+procedure TChromiumCore.CreateSettingObserver;
+begin
+  if MustCreateSettingObserver and
+     (FSettingObserver = nil) then
+    FSettingObserver := TCustomSettingObserver.Create(self);
+end;
+
+procedure TChromiumCore.CreatePreferenceObserver;
+begin
+  if (FPreferenceInfoList = nil) then
+    FPreferenceInfoList := TPreferenceInfoList.Create;
 end;
 
 procedure TChromiumCore.CreateResourceRequestHandler;
@@ -4435,8 +4674,9 @@ procedure TChromiumCore.CreateSyncObjects;
 begin
   if (Owner = nil) or not(csDesigning in ComponentState) then
     begin
-      FZoomStepCS := TCriticalSection.Create;
-      FBrowsersCS := TCriticalSection.Create;
+      FZoomStepCS       := TCriticalSection.Create;
+      FBrowsersCS       := TCriticalSection.Create;
+      FPreferenceInfoCS := TCriticalSection.Create;
     end;
 end;
 
@@ -4511,6 +4751,8 @@ begin
       CreateResourceRequestHandler;
       CreateMediaObserver;
       CreateDevToolsMsgObserver;
+      CreatePreferenceObserver;
+      CreateSettingObserver;
 
       aClient := FHandler;
       Result  := True;
@@ -4560,6 +4802,8 @@ begin
   FOnLoadingProgressChange        := nil;
   FOnCursorChange                 := nil;
   FOnMediaAccessChange            := nil;
+  FOnContentsBoundsChange         := nil;
+  FOnGetRootWindowScreenRect      := nil;
 
   // ICefDownloadHandler
   FOnCanDownload                  := nil;
@@ -4689,6 +4933,12 @@ begin
   FOnShowPermissionPrompt             := nil;
   FOnDismissPermissionPrompt          := nil;
 
+  // ICefPreferenceObserver
+  FOnPreferenceChanged                := nil;
+
+  // ICefSettingObserver
+  FOnSettingChanged                   := nil;
+
   // Custom
   FOnTextResultAvailable              := nil;
   FOnPdfPrintFinished                 := nil;
@@ -4759,6 +5009,8 @@ begin
           CreateResourceRequestHandler;
           CreateMediaObserver;
           CreateDevToolsMsgObserver;
+          CreatePreferenceObserver;
+          CreateSettingObserver;
 
           if (aContext = nil) then
             TempOldContext := TCefRequestContextRef.Global()
@@ -4812,6 +5064,8 @@ begin
           CreateResourceRequestHandler;
           CreateMediaObserver;
           CreateDevToolsMsgObserver;
+          CreatePreferenceObserver;
+          CreateSettingObserver;
 
           if (aContext = nil) then
             TempOldContext := TCefRequestContextRef.Global()
@@ -6927,6 +7181,33 @@ begin
       end;
 end;
 
+procedure TChromiumCore.AddPreferenceObserver(const name_: ustring);
+var
+  TempTask : ICefTask;
+begin
+  if CefCurrentlyOn(TID_UI) then
+    doAddPreferenceObserver(name_)
+   else
+    if Initialized then
+      try
+        TempTask := TCefAddPreferenceObserverTask.Create(self, name_);
+        CefPostTask(TID_UI, TempTask);
+      finally
+        TempTask := nil;
+      end;
+end;
+
+procedure TChromiumCore.RemovePreferenceObserver(const name_ : ustring);
+begin
+  if assigned(FPreferenceInfoCS) then
+    try
+      FPreferenceInfoCS.Acquire;
+      FPreferenceInfoList.RemovePreference(name_);
+    finally
+      FPreferenceInfoCS.Release;
+    end;
+end;
+
 function TChromiumCore.GetRequestContext : ICefRequestContext;
 begin
   if Initialized then
@@ -7303,6 +7584,18 @@ begin
 
   if (FAutofillProfile <> STATE_DEFAULT) then
     UpdatePreference(aBrowser, 'autofill.profile_enabled', (FAutofillProfile = STATE_ENABLED));
+
+  if (FAutofillSaveData <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'autofill.save_data', (FAutofillSaveData = STATE_ENABLED));
+
+  if (FCanMakePayment <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'payments.can_make_payment_enabled', (FCanMakePayment = STATE_ENABLED));
+
+  if (FSearchSuggestEnabled <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'search.suggest_enabled', (FSearchSuggestEnabled = STATE_ENABLED));
+
+  if (FURLDataCollection <> STATE_DEFAULT) then
+    UpdatePreference(aBrowser, 'url_keyed_anonymized_data_collection.enabled', (FURLDataCollection = STATE_ENABLED));
 
   if assigned(FOnPrefsUpdated) then
     FOnPrefsUpdated(self);
@@ -7899,6 +8192,26 @@ begin
   FTryingToCloseBrowser := False;
 end;
 
+procedure TChromiumCore.doAddPreferenceObserver(const name_ : ustring);
+var
+  TempContext : ICefRequestContext;
+  i : integer;
+begin
+  if assigned(FPreferenceInfoCS) and Initialized then
+    try
+      FPreferenceInfoCS.Acquire;
+      TempContext := Browser.Host.RequestContext;
+
+      if (TempContext <> nil) and not(FPreferenceInfoList.HasPreference(name_)) then
+        begin
+          i := FPreferenceInfoList.AddPreference(name_, self);
+          TempContext.AddPreferenceObserver(name, TPreferenceInfo(FPreferenceInfoList[i]).Observer);
+        end;
+    finally
+      FPreferenceInfoCS.Release;
+    end;
+end;
+
 procedure TChromiumCore.doEnableFocus;
 begin
   FCanFocus := True;
@@ -8018,7 +8331,9 @@ begin
             assigned(FOnAutoResize)            or
             assigned(FOnLoadingProgressChange) or
             assigned(FOnCursorChange)          or
-            assigned(FOnMediaAccessChange);
+            assigned(FOnMediaAccessChange)     or
+            assigned(FOnContentsBoundsChange)  or
+            assigned(FOnGetRootWindowScreenRect);
 end;
 
 function TChromiumCore.MustCreateDownloadHandler : boolean;
@@ -8107,6 +8422,11 @@ begin
             assigned(FOnDevToolsRawEvent)        or
             assigned(FOnDevToolsAgentAttached)   or
             assigned(FOnDevToolsAgentDetached);
+end;
+
+function TChromiumCore.MustCreateSettingObserver : boolean;
+begin
+  Result := assigned(FOnSettingChanged);
 end;
 
 function TChromiumCore.MustCreatePrintHandler : boolean;
@@ -8294,6 +8614,21 @@ begin
     Result := Browser.Host.AddDevToolsMessageObserver(observer)
    else
     Result := nil;
+end;
+
+function TChromiumCore.AddSettingObserver(const observer: ICefSettingObserver): ICefRegistration;
+var
+  TempContext : ICefRequestContext;
+begin
+  Result := nil;
+
+  if Initialized then
+    begin
+      TempContext := Browser.Host.RequestContext;
+
+      if (TempContext <> nil) then
+        Result := TempContext.AddSettingObserver(observer);
+    end;
 end;
 
 {$IFDEF MSWINDOWS}
@@ -8508,6 +8843,9 @@ begin
 
   if (FDevToolsMsgObserver <> nil) and (FDevToolsMsgObserverReg = nil) then
     FDevToolsMsgObserverReg := AddDevToolsMessageObserver(FDevToolsMsgObserver);
+
+  if (FSettingObserver <> nil) and (FSettingObserverReg = nil) then
+    FSettingObserverReg := AddSettingObserver(FSettingObserver);
 
   if assigned(FOnAfterCreated) then
     FOnAfterCreated(Self, browser);
@@ -8765,6 +9103,22 @@ procedure TChromiumCore.doOnMediaAccessChange(const browser: ICefBrowser; has_vi
 begin
   if assigned(FOnMediaAccessChange) then
     FOnMediaAccessChange(self, browser, has_video_access, has_audio_access);
+end;
+
+function TChromiumCore.doOnContentsBoundsChange(const browser: ICefBrowser; const new_bounds: PCefRect): Boolean;
+begin
+  Result := False;
+
+  if assigned(FOnContentsBoundsChange) then
+    FOnContentsBoundsChange(self, browser, new_bounds, Result);
+end;
+
+function TChromiumCore.doOnGetRootWindowScreenRect(const browser: ICefBrowser; rect_: PCefRect): Boolean;
+begin
+  Result := False;
+
+  if assigned(FOnGetRootWindowScreenRect) then
+    FOnGetRootWindowScreenRect(self, browser, rect_, Result);
 end;
 
 procedure TChromiumCore.doOnDialogClosed(const browser: ICefBrowser);
@@ -9141,6 +9495,18 @@ procedure TChromiumCore.doOnDismissPermissionPrompt(const browser   : ICefBrowse
 begin
   if assigned(FOnDismissPermissionPrompt) then
     FOnDismissPermissionPrompt(self, browser, prompt_id, result);
+end;
+
+procedure TChromiumCore.doOnPreferenceChanged(const name_: ustring);
+begin
+  if assigned(FOnPreferenceChanged) then
+    FOnPreferenceChanged(self, name_);
+end;
+
+procedure TChromiumCore.doOnSettingChanged(const requesting_url, top_level_url : ustring; content_type: TCefContentSettingTypes);
+begin
+  if assigned(FOnSettingChanged) then
+    FOnSettingChanged(self, requesting_url, top_level_url, content_type);
 end;
 
 procedure TChromiumCore.doOnFullScreenModeChange(const browser    : ICefBrowser;

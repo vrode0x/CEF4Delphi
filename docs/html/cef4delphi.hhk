@@ -290,16 +290,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CefStringSet">
-<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-PCefString-ustring-">
+<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-TCefString-TCefString-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-PCefString-ustring-">
+<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-TCefString-TCefString-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-TCefString-TCefString-">
+<param name="Local" value="uCEFMiscFunctions.html#CefStringSet-PCefString-ustring-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -365,10 +365,6 @@
 <li><object type="text/sitemap">
 <param name="Name" value="CEF_API_HASH_PLATFORM_MAC">
 <param name="Local" value="uCEFApplicationCore.html#CEF_API_HASH_PLATFORM_MAC">
-</object>
-<li><object type="text/sitemap">
-<param name="Name" value="CEF_API_HASH_PLATFORM_UNIVERSAL">
-<param name="Local" value="uCEFApplicationCore.html#CEF_API_HASH_PLATFORM_UNIVERSAL">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CEF_API_HASH_PLATFORM_WINDOWS">
@@ -825,10 +821,6 @@
 <param name="Local" value="uCEFLibFunctions.html#cef_dump_without_crashing">
 </object>
 <li><object type="text/sitemap">
-<param name="Name" value="cef_dump_without_crashing_unthrottled">
-<param name="Local" value="uCEFLibFunctions.html#cef_dump_without_crashing_unthrottled">
-</object>
-<li><object type="text/sitemap">
 <param name="Name" value="cef_end_tracing">
 <param name="Local" value="uCEFLibFunctions.html#cef_end_tracing">
 </object>
@@ -1233,6 +1225,10 @@
 <param name="Local" value="uCEFConstants.html#CEF_PERMISSION_TYPE_LOCAL_FONTS">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS">
+<param name="Local" value="uCEFConstants.html#CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="CEF_PERMISSION_TYPE_MIC_STREAM">
 <param name="Local" value="uCEFConstants.html#CEF_PERMISSION_TYPE_MIC_STREAM">
 </object>
@@ -1303,6 +1299,14 @@
 <li><object type="text/sitemap">
 <param name="Name" value="CEF_PREFERENCES_SAVED">
 <param name="Local" value="uCEFConstants.html#CEF_PREFERENCES_SAVED">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="cef_preference_manager_get_chrome_variations_as_strings">
+<param name="Local" value="uCEFLibFunctions.html#cef_preference_manager_get_chrome_variations_as_strings">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="cef_preference_manager_get_chrome_variations_as_switches">
+<param name="Local" value="uCEFLibFunctions.html#cef_preference_manager_get_chrome_variations_as_switches">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="cef_preference_manager_get_global">
@@ -2674,9 +2678,13 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="DeviceToLogical">
-<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-single-double-">
+<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TCEFMouseEvent-double-">
 </object>
 <ul>
+<li><object type="text/sitemap">
+<param name="Name" value="uCEFMiscFunctions Unit">
+<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TCEFMouseEvent-double-">
+</object>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
 <param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-single-double-">
@@ -2687,15 +2695,11 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TCEFMouseEvent-double-">
+<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TPoint-double-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
 <param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TCefTouchEvent-double-">
-</object>
-<li><object type="text/sitemap">
-<param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#DeviceToLogical-TPoint-double-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -2887,6 +2891,10 @@
 <param name="Local" value="uCEFConstants.html#ERR_BLOCKED_BY_CSP">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION">
+<param name="Local" value="uCEFConstants.html#ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="ERR_BLOCKED_BY_ORB">
 <param name="Local" value="uCEFConstants.html#ERR_BLOCKED_BY_ORB">
 </object>
@@ -3011,8 +3019,8 @@
 <param name="Local" value="uCEFConstants.html#ERR_CERT_REVOKED">
 </object>
 <li><object type="text/sitemap">
-<param name="Name" value="ERR_CERT_SYMANTEC_LEGACY">
-<param name="Local" value="uCEFConstants.html#ERR_CERT_SYMANTEC_LEGACY">
+<param name="Name" value="ERR_CERT_SELF_SIGNED_LOCAL_NETWORK">
+<param name="Local" value="uCEFConstants.html#ERR_CERT_SELF_SIGNED_LOCAL_NETWORK">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ERR_CERT_UNABLE_TO_CHECK_REVOCATION">
@@ -3457,6 +3465,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="ERR_PROXY_HTTP_1_1_REQUIRED">
 <param name="Local" value="uCEFConstants.html#ERR_PROXY_HTTP_1_1_REQUIRED">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="ERR_PROXY_REQUIRED">
+<param name="Local" value="uCEFConstants.html#ERR_PROXY_REQUIRED">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ERR_QUIC_CERT_ROOT_NOT_KNOWN">
@@ -4769,6 +4781,10 @@
 <param name="Local" value="uCEFInterfaces.ICefBrowserViewDelegate.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="OnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFInterfaces.ICefBrowserViewDelegate.html#OnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnBrowserCreated">
 <param name="Local" value="uCEFInterfaces.ICefBrowserViewDelegate.html#OnBrowserCreated-ICefBrowserView-ICefBrowser-">
 </object>
@@ -4803,6 +4819,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="ICefBrowserViewDelegateEvents">
 <param name="Local" value="uCEFInterfaces.ICefBrowserViewDelegateEvents.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doOnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFInterfaces.ICefBrowserViewDelegateEvents.html#doOnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doOnBrowserCreated">
@@ -5058,16 +5078,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetSwitches">
-<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStringList-TStringList-">
+<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStrings-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefCommandLine - uCEFInterfaces Unit">
-<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStringList-TStringList-">
+<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStrings-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefCommandLine - uCEFInterfaces Unit">
-<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStrings-">
+<param name="Local" value="uCEFInterfaces.ICefCommandLine.html#GetSwitches-TStringList-TStringList-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -5395,6 +5415,26 @@
 <param name="Local" value="uCEFInterfaces.ICefCustomStreamReader.html#Tell">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="ICefCustomUserData">
+<param name="Local" value="uCEFInterfaces.ICefCustomUserData.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetUserData">
+<param name="Local" value="uCEFInterfaces.ICefCustomUserData.html#GetUserData">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetUserDataType">
+<param name="Local" value="uCEFInterfaces.ICefCustomUserData.html#GetUserDataType">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="UserData">
+<param name="Local" value="uCEFInterfaces.ICefCustomUserData.html#UserData">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="UserDataType">
+<param name="Local" value="uCEFInterfaces.ICefCustomUserData.html#UserDataType">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="ICefDeleteCookiesCallback">
 <param name="Local" value="uCEFInterfaces.ICefDeleteCookiesCallback.html">
 </object>
@@ -5615,6 +5655,10 @@
 <param name="Local" value="uCEFInterfaces.ICefDisplayHandler.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="GetRootWindowScreenRect">
+<param name="Local" value="uCEFInterfaces.ICefDisplayHandler.html#GetRootWindowScreenRect-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnAddressChange">
 <param name="Local" value="uCEFInterfaces.ICefDisplayHandler.html#OnAddressChange-ICefBrowser-ICefFrame-ustring-">
 </object>
@@ -5625,6 +5669,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnConsoleMessage">
 <param name="Local" value="uCEFInterfaces.ICefDisplayHandler.html#OnConsoleMessage-ICefBrowser-TCefLogSeverity-ustring-ustring-Integer-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnContentsBoundsChange">
+<param name="Local" value="uCEFInterfaces.ICefDisplayHandler.html#OnContentsBoundsChange-ICefBrowser-PCefRect-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnCursorChange">
@@ -5808,16 +5856,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetElementAttributes">
-<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-ICefStringMap-">
+<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-TStrings-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefDomNode - uCEFInterfaces Unit">
-<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-ICefStringMap-">
+<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-TStrings-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefDomNode - uCEFInterfaces Unit">
-<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-TStrings-">
+<param name="Local" value="uCEFInterfaces.ICefDomNode.html#GetElementAttributes-ICefStringMap-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -7669,6 +7717,10 @@
 <param name="Local" value="uCEFInterfaces.ICefPreferenceManager.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="AddPreferenceObserver">
+<param name="Local" value="uCEFInterfaces.ICefPreferenceManager.html#AddPreferenceObserver-ustring-ICefPreferenceObserver-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="CanSetPreference">
 <param name="Local" value="uCEFInterfaces.ICefPreferenceManager.html#CanSetPreference-ustring-">
 </object>
@@ -7687,6 +7739,14 @@
 <li><object type="text/sitemap">
 <param name="Name" value="SetPreference">
 <param name="Local" value="uCEFInterfaces.ICefPreferenceManager.html#SetPreference-ustring-ICefValue-ustring-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="ICefPreferenceObserver">
+<param name="Local" value="uCEFInterfaces.ICefPreferenceObserver.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnPreferenceChanged">
+<param name="Local" value="uCEFInterfaces.ICefPreferenceObserver.html#OnPreferenceChanged-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefPrintDialogCallback">
@@ -8187,6 +8247,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="ICefRequestContext">
 <param name="Local" value="uCEFInterfaces.ICefRequestContext.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="AddSettingObserver">
+<param name="Local" value="uCEFInterfaces.ICefRequestContext.html#AddSettingObserver-ICefSettingObserver-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CachePath">
@@ -8799,6 +8863,14 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnComplete">
 <param name="Local" value="uCEFInterfaces.ICefSetCookieCallback.html#OnComplete-Boolean-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="ICefSettingObserver">
+<param name="Local" value="uCEFInterfaces.ICefSettingObserver.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnSettingChanged">
+<param name="Local" value="uCEFInterfaces.ICefSettingObserver.html#OnSettingChanged-ustring-ustring-TCefContentSettingTypes-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ICefSharedMemoryRegion">
@@ -9914,7 +9986,7 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SetUserData">
-<param name="Local" value="uCEFInterfaces.ICefv8Value.html#SetUserData-ICefv8Value-">
+<param name="Local" value="uCEFInterfaces.ICefv8Value.html#SetUserData-ICefCustomUserData-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SetValueByAccessor">
@@ -11141,6 +11213,10 @@
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#ComponentID">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doAddPreferenceObserver">
+<param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doAddPreferenceObserver-ustring-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doAllConnectionsClosed">
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doAllConnectionsClosed">
 </object>
@@ -11285,6 +11361,10 @@
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnConsoleMessage-ICefBrowser-TCefLogSeverity-ustring-ustring-Integer-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doOnContentsBoundsChange">
+<param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnContentsBoundsChange-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doOnContextMenuCommand">
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnContextMenuCommand-ICefBrowser-ICefFrame-ICefContextMenuParams-Integer-TCefEventFlags-">
 </object>
@@ -11421,6 +11501,10 @@
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnGetRootScreenRect-ICefBrowser-TCefRect-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doOnGetRootWindowScreenRect">
+<param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnGetRootWindowScreenRect-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doOnGetScreenInfo">
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnGetScreenInfo-ICefBrowser-TCefScreenInfo-">
 </object>
@@ -11511,6 +11595,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="doOnPopupSize">
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnPopupSize-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doOnPreferenceChanged">
+<param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnPreferenceChanged-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doOnPreKeyEvent">
@@ -11615,6 +11703,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="doOnSetFocus">
 <param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnSetFocus-ICefBrowser-TCefFocusSource-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doOnSettingChanged">
+<param name="Local" value="uCEFInterfaces.IChromiumEvents.html#doOnSettingChanged-ustring-ustring-TCefContentSettingTypes-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doOnShowPermissionPrompt">
@@ -11829,6 +11921,14 @@
 <param name="Local" value="uCEFConstants.html#IDC_ADD_NEW_PROFILE">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_ADD_NEW_TAB_TO_GROUP">
+<param name="Local" value="uCEFConstants.html#IDC_ADD_NEW_TAB_TO_GROUP">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_ADD_TO_COMPARISON_TABLE_MENU">
+<param name="Local" value="uCEFConstants.html#IDC_ADD_TO_COMPARISON_TABLE_MENU">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_ALL_WINDOWS_FRONT">
 <param name="Local" value="uCEFConstants.html#IDC_ALL_WINDOWS_FRONT">
 </object>
@@ -11873,6 +11973,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_BOOKMARK_BAR_EDIT">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_BOOKMARK_BAR_MOVE">
+<param name="Local" value="uCEFConstants.html#IDC_BOOKMARK_BAR_MOVE">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_BOOKMARK_BAR_NEW_FOLDER">
 <param name="Local" value="uCEFConstants.html#IDC_BOOKMARK_BAR_NEW_FOLDER">
 </object>
@@ -11895,6 +11999,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_BOOKMARK_BAR_OPEN_INCOGNITO">
 <param name="Local" value="uCEFConstants.html#IDC_BOOKMARK_BAR_OPEN_INCOGNITO">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_BOOKMARK_BAR_OPEN_SPLIT_VIEW">
+<param name="Local" value="uCEFConstants.html#IDC_BOOKMARK_BAR_OPEN_SPLIT_VIEW">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_BOOKMARK_BAR_REDO">
@@ -11989,12 +12097,12 @@
 <param name="Local" value="uCEFConstants.html#IDC_CLOSE_TAB">
 </object>
 <li><object type="text/sitemap">
-<param name="Name" value="IDC_CLOSE_WINDOW">
-<param name="Local" value="uCEFConstants.html#IDC_CLOSE_WINDOW">
+<param name="Name" value="IDC_CLOSE_TAB_GROUP">
+<param name="Local" value="uCEFConstants.html#IDC_CLOSE_TAB_GROUP">
 </object>
 <li><object type="text/sitemap">
-<param name="Name" value="IDC_COMPACT_MODE">
-<param name="Local" value="uCEFConstants.html#IDC_COMPACT_MODE">
+<param name="Name" value="IDC_CLOSE_WINDOW">
+<param name="Local" value="uCEFConstants.html#IDC_CLOSE_WINDOW">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_COMPARE_MENU">
@@ -12041,8 +12149,8 @@
 <param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_AUTOFILL_FEEDBACK">
 </object>
 <li><object type="text/sitemap">
-<param name="Name" value="IDC_CONTENT_CONTEXT_AUTOFILL_PREDICTION_IMPROVEMENTS">
-<param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_AUTOFILL_PREDICTION_IMPROVEMENTS">
+<param name="Name" value="IDC_CONTENT_CONTEXT_CLOSE_GLIC">
+<param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_CLOSE_GLIC">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_CONTENT_CONTEXT_CONTROLS">
@@ -12301,6 +12409,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_RELOADFRAME">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_CONTENT_CONTEXT_RELOAD_GLIC">
+<param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_RELOAD_GLIC">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_CONTENT_CONTEXT_RELOAD_PACKAGED_APP">
 <param name="Local" value="uCEFConstants.html#IDC_CONTENT_CONTEXT_RELOAD_PACKAGED_APP">
 </object>
@@ -12469,6 +12581,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_COPY_URL">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_CREATE_NEW_COMPARISON_TABLE_WITH_TAB">
+<param name="Local" value="uCEFConstants.html#IDC_CREATE_NEW_COMPARISON_TABLE_WITH_TAB">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_CREATE_NEW_TAB_GROUP">
 <param name="Local" value="uCEFConstants.html#IDC_CREATE_NEW_TAB_GROUP">
 </object>
@@ -12621,6 +12737,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_FIND_AND_EDIT_MENU">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_FIND_EXTENSIONS">
+<param name="Local" value="uCEFConstants.html#IDC_FIND_EXTENSIONS">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_FIND_MENU">
 <param name="Local" value="uCEFConstants.html#IDC_FIND_MENU">
 </object>
@@ -12653,8 +12773,16 @@
 <param name="Local" value="uCEFConstants.html#IDC_FOCUS_NEXT_PANE">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_FOCUS_NEXT_TAB_GROUP">
+<param name="Local" value="uCEFConstants.html#IDC_FOCUS_NEXT_TAB_GROUP">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_FOCUS_PREVIOUS_PANE">
 <param name="Local" value="uCEFConstants.html#IDC_FOCUS_PREVIOUS_PANE">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_FOCUS_PREV_TAB_GROUP">
+<param name="Local" value="uCEFConstants.html#IDC_FOCUS_PREV_TAB_GROUP">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_FOCUS_SEARCH">
@@ -12681,8 +12809,20 @@
 <param name="Local" value="uCEFConstants.html#IDC_FULLSCREEN">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_CLOSE">
+<param name="Local" value="uCEFConstants.html#IDC_GLIC_STATUS_ICON_MENU_CLOSE">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_CUSTOMIZE_KEYBOARD_SHORTCUT">
 <param name="Local" value="uCEFConstants.html#IDC_GLIC_STATUS_ICON_MENU_CUSTOMIZE_KEYBOARD_SHORTCUT">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_EXIT">
+<param name="Local" value="uCEFConstants.html#IDC_GLIC_STATUS_ICON_MENU_EXIT">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_REMOVE_ICON">
+<param name="Local" value="uCEFConstants.html#IDC_GLIC_STATUS_ICON_MENU_REMOVE_ICON">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_SETTINGS">
@@ -12691,6 +12831,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_GLIC_STATUS_ICON_MENU_SHOW">
 <param name="Local" value="uCEFConstants.html#IDC_GLIC_STATUS_ICON_MENU_SHOW">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_GLIC_TOGGLE_PIN">
+<param name="Local" value="uCEFConstants.html#IDC_GLIC_TOGGLE_PIN">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_GROUP_TARGET_TAB">
@@ -12849,6 +12993,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_NEW_INCOGNITO_WINDOW">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_NEW_SPLIT_TAB">
+<param name="Local" value="uCEFConstants.html#IDC_NEW_SPLIT_TAB">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_NEW_TAB">
 <param name="Local" value="uCEFConstants.html#IDC_NEW_TAB">
 </object>
@@ -12871,6 +13019,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_OPEN_FILE">
 <param name="Local" value="uCEFConstants.html#IDC_OPEN_FILE">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_OPEN_GLIC">
+<param name="Local" value="uCEFConstants.html#IDC_OPEN_GLIC">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_OPEN_GUEST_PROFILE">
@@ -13077,6 +13229,10 @@
 <param name="Local" value="uCEFConstants.html#IDC_SELECT_TAB_7">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="IDC_SEND_SHARED_TAB_GROUP_FEEDBACK">
+<param name="Local" value="uCEFConstants.html#IDC_SEND_SHARED_TAB_GROUP_FEEDBACK">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="IDC_SEND_TAB_TO_SELF">
 <param name="Local" value="uCEFConstants.html#IDC_SEND_TAB_TO_SELF">
 </object>
@@ -13163,6 +13319,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_SHOW_HISTORY_CLUSTERS_SIDE_PANEL">
 <param name="Local" value="uCEFConstants.html#IDC_SHOW_HISTORY_CLUSTERS_SIDE_PANEL">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_SHOW_HISTORY_SIDE_PANEL">
+<param name="Local" value="uCEFConstants.html#IDC_SHOW_HISTORY_SIDE_PANEL">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_SHOW_MANAGEMENT_PAGE">
@@ -13259,6 +13419,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND">
 <param name="Local" value="uCEFConstants.html#IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND_SETTING">
+<param name="Local" value="uCEFConstants.html#IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND_SETTING">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="IDC_STOP">
@@ -13552,16 +13716,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="LogicalToDevice">
-<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-TCEFRect-double-">
+<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-integer-double-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-TCEFRect-double-">
+<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-integer-double-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="uCEFMiscFunctions Unit">
-<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-integer-double-">
+<param name="Local" value="uCEFMiscFunctions.html#LogicalToDevice-TCEFRect-double-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -14213,6 +14377,10 @@
 <param name="Local" value="uCEFTypes.html#PCefPreferenceManager">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="PCefPreferenceObserver">
+<param name="Local" value="uCEFTypes.html#PCefPreferenceObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="PCefPreferenceRegistrar">
 <param name="Local" value="uCEFTypes.html#PCefPreferenceRegistrar">
 </object>
@@ -14363,6 +14531,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="PCefSetCookieCallback">
 <param name="Local" value="uCEFTypes.html#PCefSetCookieCallback">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="PCefSettingObserver">
+<param name="Local" value="uCEFTypes.html#PCefSettingObserver">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="PCefSettings">
@@ -15801,6 +15973,22 @@
 <param name="Local" value="uCEFAccessibilityHandler.TCEFAccessibilityHandlerOwn.html#OnAccessibilityTreeChange-ICefValue-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="TCefAddPreferenceObserverTask">
+<param name="Local" value="uCEFTask.TCefAddPreferenceObserverTask.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Create">
+<param name="Local" value="uCEFTask.TCefAddPreferenceObserverTask.html#Create-IChromiumEvents-ustring-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Execute">
+<param name="Local" value="uCEFTask.TCefAddPreferenceObserverTask.html#Execute">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FName">
+<param name="Local" value="uCEFTask.TCefAddPreferenceObserverTask.html#FName">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="TCefAlphaType">
 <param name="Local" value="uCEFTypes.html#TCefAlphaType">
 </object>
@@ -15935,10 +16123,6 @@
 <li><object type="text/sitemap">
 <param name="Name" value="ApiHashPlatform">
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#ApiHashPlatform">
-</object>
-<li><object type="text/sitemap">
-<param name="Name" value="ApiHashUniversal">
-<param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#ApiHashUniversal">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ApiVersion">
@@ -16307,10 +16491,6 @@
 <li><object type="text/sitemap">
 <param name="Name" value="DumpWithoutCrashing">
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#DumpWithoutCrashing-int64-ustring-ustring-integer-">
-</object>
-<li><object type="text/sitemap">
-<param name="Name" value="DumpWithoutCrashingUnthrottled">
-<param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#DumpWithoutCrashingUnthrottled">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="EnableBlinkFeatures">
@@ -16869,6 +17049,10 @@
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#FProcessType">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FProxySettings">
+<param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#FProxySettings">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FrameworkDirPath">
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#FrameworkDirPath">
 </object>
@@ -16967,10 +17151,6 @@
 <li><object type="text/sitemap">
 <param name="Name" value="GetApiHashPlatform">
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#GetApiHashPlatform">
-</object>
-<li><object type="text/sitemap">
-<param name="Name" value="GetApiHashUniversal">
-<param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#GetApiHashUniversal">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetApiVersion">
@@ -17579,6 +17759,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="ProcessType">
 <param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#ProcessType">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="ProxySettings">
+<param name="Local" value="uCEFApplicationCore.TCefApplicationCore.html#ProxySettings">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="QuitMessageLoop">
@@ -19521,6 +19705,10 @@
 <param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#DestroyView">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doOnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#doOnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doOnBrowserCreated">
 <param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#doOnBrowserCreated-ICefBrowserView-ICefBrowser-">
 </object>
@@ -19559,6 +19747,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FBrowserViewDlg">
 <param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#FBrowserViewDlg">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FOnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#FOnAllowMoveForPictureInPicture">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FOnBrowserCreated">
@@ -19625,6 +19817,10 @@
 <param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#Initialize">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="OnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#OnAllowMoveForPictureInPicture">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnBrowserCreated">
 <param name="Local" value="uCEFBrowserViewComponent.TCEFBrowserViewComponent.html#OnBrowserCreated">
 </object>
@@ -19667,6 +19863,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TCefBrowserViewDelegate">
 <param name="Local" value="uCEFTypes.TCefBrowserViewDelegate.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="allow_move_for_picture_in_picture">
+<param name="Local" value="uCEFTypes.TCefBrowserViewDelegate.html#allow_move_for_picture_in_picture">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="base">
@@ -19717,6 +19917,10 @@
 <param name="Local" value="uCEFBrowserViewDelegate.TCefBrowserViewDelegateOwn.html#InitializeCEFMethods">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="OnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewDelegate.TCefBrowserViewDelegateOwn.html#OnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnBrowserCreated">
 <param name="Local" value="uCEFBrowserViewDelegate.TCefBrowserViewDelegateOwn.html#OnBrowserCreated-ICefBrowserView-ICefBrowser-">
 </object>
@@ -19751,6 +19955,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TCefBrowserViewDelegateRef">
 <param name="Local" value="uCEFBrowserViewDelegate.TCefBrowserViewDelegateRef.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewDelegate.TCefBrowserViewDelegateRef.html#OnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnBrowserCreated">
@@ -21724,16 +21932,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="Create">
-<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-TStream-Boolean-">
+<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-string-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefCustomStreamReader - uCEFCustomStreamReader Unit">
-<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-TStream-Boolean-">
+<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-string-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefCustomStreamReader - uCEFCustomStreamReader Unit">
-<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-string-">
+<param name="Local" value="uCEFCustomStreamReader.TCefCustomStreamReader.html#Create-TStream-Boolean-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -21895,6 +22103,38 @@
 <li><object type="text/sitemap">
 <param name="Name" value="GetValue">
 <param name="Local" value="uCEFStringMultimap.TCefCustomStringMultimap.html#GetValue-NativeUInt-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TCefCustomUserData">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Create">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#Create-Pointer-Pointer-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Destroy">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#Destroy">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FUserData">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#FUserData">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FUserDataType">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#FUserDataType">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetUserData">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#GetUserData">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetUserDataType">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#GetUserDataType">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="UnWrap">
+<param name="Local" value="uCEFv8Handler.TCefCustomUserData.html#UnWrap-Pointer-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefDeleteCookiesCallback">
@@ -22339,6 +22579,10 @@
 <param name="Local" value="uCEFTypes.TCefDisplayHandler.html#base">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="get_root_window_screen_rect">
+<param name="Local" value="uCEFTypes.TCefDisplayHandler.html#get_root_window_screen_rect">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="on_address_change">
 <param name="Local" value="uCEFTypes.TCefDisplayHandler.html#on_address_change">
 </object>
@@ -22349,6 +22593,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="on_console_message">
 <param name="Local" value="uCEFTypes.TCefDisplayHandler.html#on_console_message">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="on_contents_bounds_change">
+<param name="Local" value="uCEFTypes.TCefDisplayHandler.html#on_contents_bounds_change">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="on_cursor_change">
@@ -22391,6 +22639,10 @@
 <param name="Local" value="uCEFDisplayHandler.TCefDisplayHandlerOwn.html#Create">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="GetRootWindowScreenRect">
+<param name="Local" value="uCEFDisplayHandler.TCefDisplayHandlerOwn.html#GetRootWindowScreenRect-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnAddressChange">
 <param name="Local" value="uCEFDisplayHandler.TCefDisplayHandlerOwn.html#OnAddressChange-ICefBrowser-ICefFrame-ustring-">
 </object>
@@ -22401,6 +22653,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnConsoleMessage">
 <param name="Local" value="uCEFDisplayHandler.TCefDisplayHandlerOwn.html#OnConsoleMessage-ICefBrowser-TCefLogSeverity-ustring-ustring-Integer-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnContentsBoundsChange">
+<param name="Local" value="uCEFDisplayHandler.TCefDisplayHandlerOwn.html#OnContentsBoundsChange-ICefBrowser-PCefRect-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnCursorChange">
@@ -22788,16 +23044,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetElementAttributes">
-<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-ICefStringMap-">
+<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-TStrings-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefDomNodeRef - uCEFDomNode Unit">
-<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-ICefStringMap-">
+<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-TStrings-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefDomNodeRef - uCEFDomNode Unit">
-<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-TStrings-">
+<param name="Local" value="uCEFDomNode.TCefDomNodeRef.html#GetElementAttributes-ICefStringMap-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -28559,6 +28815,10 @@
 <param name="Local" value="uCEFTypes.TCefPreferenceManager.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="add_preference_observer">
+<param name="Local" value="uCEFTypes.TCefPreferenceManager.html#add_preference_observer">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="base">
 <param name="Local" value="uCEFTypes.TCefPreferenceManager.html#base">
 </object>
@@ -28587,12 +28847,24 @@
 <param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="AddPreferenceObserver">
+<param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#AddPreferenceObserver-ustring-ICefPreferenceObserver-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="CanSetPreference">
 <param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#CanSetPreference-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetAllPreferences">
 <param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#GetAllPreferences-Boolean-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetChromeVariationsAsStrings">
+<param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#GetChromeVariationsAsStrings-TStrings-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="GetChromeVariationsAsSwitches">
+<param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#GetChromeVariationsAsSwitches-TStrings-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="GetPreference">
@@ -28613,6 +28885,18 @@
 <li><object type="text/sitemap">
 <param name="Name" value="UnWrap">
 <param name="Local" value="uCEFPreferenceManager.TCefPreferenceManagerRef.html#UnWrap-Pointer-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TCefPreferenceObserver">
+<param name="Local" value="uCEFTypes.TCefPreferenceObserver.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="base">
+<param name="Local" value="uCEFTypes.TCefPreferenceObserver.html#base">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="on_preference_changed">
+<param name="Local" value="uCEFTypes.TCefPreferenceObserver.html#on_preference_changed">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefPreferenceRegistrar">
@@ -29037,6 +29321,54 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TCefProxyScheme">
 <param name="Local" value="uCEFTypes.html#TCefProxyScheme">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TCEFProxySettings">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="AutoDetect">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#AutoDetect">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="ByPassList">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#ByPassList">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Create">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#Create">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FAutoDetect">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#FAutoDetect">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FByPassList">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#FByPassList">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FNoProxyServer">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#FNoProxyServer">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FPacUrl">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#FPacUrl">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FServer">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#FServer">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="NoProxyServer">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#NoProxyServer">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="PacUrl">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#PacUrl">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="Server">
+<param name="Local" value="uCEFApplicationCore.TCEFProxySettings.html#Server">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefQuickMenuEditStateFlags">
@@ -29491,6 +29823,10 @@
 <param name="Local" value="uCEFTypes.TCefRequestContext.html">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="add_setting_observer">
+<param name="Local" value="uCEFTypes.TCefRequestContext.html#add_setting_observer">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="base">
 <param name="Local" value="uCEFTypes.TCefRequestContext.html#base">
 </object>
@@ -29637,6 +29973,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TCefRequestContextRef">
 <param name="Local" value="uCEFRequestContext.TCefRequestContextRef.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="AddSettingObserver">
+<param name="Local" value="uCEFRequestContext.TCefRequestContextRef.html#AddSettingObserver-ICefSettingObserver-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ClearCertificateExceptions">
@@ -31555,6 +31895,18 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TCefSetCookieCallbackProc">
 <param name="Local" value="uCEFInterfaces.html#TCefSetCookieCallbackProc">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TCefSettingObserver">
+<param name="Local" value="uCEFTypes.TCefSettingObserver.html">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="base">
+<param name="Local" value="uCEFTypes.TCefSettingObserver.html#base">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="on_setting_changed">
+<param name="Local" value="uCEFTypes.TCefSettingObserver.html#on_setting_changed">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TCefSettings">
@@ -34830,7 +35182,7 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SetUserData">
-<param name="Local" value="uCEFv8Value.TCefv8ValueRef.html#SetUserData-ICefv8Value-">
+<param name="Local" value="uCEFv8Value.TCefv8ValueRef.html#SetUserData-ICefCustomUserData-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SetValueByAccessor">
@@ -38857,6 +39209,14 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AddObserver-ICefMediaObserver-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="AddPreferenceObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AddPreferenceObserver-ustring-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="AddSettingObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AddSettingObserver-ICefSettingObserver-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="AddWordToDictionary">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AddWordToDictionary-ustring-">
 </object>
@@ -38887,6 +39247,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="AutofillProfile">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AutofillProfile">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="AutofillSaveData">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#AutofillSaveData">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="BatterySaverModeState">
@@ -38955,6 +39319,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="CanIncZoom">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CanIncZoom">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="CanMakePayment">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CanMakePayment">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CanResetZoom">
@@ -39060,16 +39428,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CreateBrowser">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -39086,16 +39454,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CreateClientHandler">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-ICefClient-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-boolean-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-ICefClient-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-boolean-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateClientHandler-ICefClient-boolean-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -39111,6 +39479,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateOptionsClasses">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="CreatePreferenceObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreatePreferenceObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="CreateRequestContextHandler">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateRequestContextHandler">
 </object>
@@ -39123,6 +39495,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateRoute-ICefMediaSource-ICefMediaSink-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="CreateSettingObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateSettingObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="CreateStub">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateStub-TWndMethod-Pointer-">
 </object>
@@ -39132,16 +39508,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CreateUrlRequest">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ICefFrame-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ustring-ustring-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ICefFrame-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ustring-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ustring-ustring-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#CreateUrlRequest-ICefRequest-ICefUrlrequestClient-ICefFrame-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -39225,6 +39601,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DestroyMediaObserver">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="DestroyPreferenceObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DestroyPreferenceObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="DestroyReqContextHandler">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DestroyReqContextHandler">
 </object>
@@ -39233,12 +39613,20 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DestroyResourceRequestHandler">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="DestroySettingObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DestroySettingObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="DevToolsMsgObserver">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DevToolsMsgObserver">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="DevToolsMsgObserverReg">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#DevToolsMsgObserverReg">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doAddPreferenceObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doAddPreferenceObserver-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doAllConnectionsClosed">
@@ -39393,6 +39781,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnConsoleMessage-ICefBrowser-TCefLogSeverity-ustring-ustring-Integer-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doOnContentsBoundsChange">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnContentsBoundsChange-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doOnContextMenuCommand">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnContextMenuCommand-ICefBrowser-ICefFrame-ICefContextMenuParams-Integer-TCefEventFlags-">
 </object>
@@ -39529,6 +39921,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnGetRootScreenRect-ICefBrowser-TCefRect-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="doOnGetRootWindowScreenRect">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnGetRootWindowScreenRect-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="doOnGetScreenInfo">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnGetScreenInfo-ICefBrowser-TCefScreenInfo-">
 </object>
@@ -39619,6 +40015,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="doOnPopupSize">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnPopupSize-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doOnPreferenceChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnPreferenceChanged-ustring-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doOnPreKeyEvent">
@@ -39723,6 +40123,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="doOnSetFocus">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnSetFocus-ICefBrowser-TCefFocusSource-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="doOnSettingChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#doOnSettingChanged-ustring-ustring-TCefContentSettingTypes-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="doOnShowPermissionPrompt">
@@ -39983,6 +40387,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FAutofillProfile">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FAutofillSaveData">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FAutofillSaveData">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FBatterySaverModeState">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FBatterySaverModeState">
 </object>
@@ -40017,6 +40425,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FCanFocus">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FCanFocus">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FCanMakePayment">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FCanMakePayment">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FCompHandle">
@@ -40275,6 +40687,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnConsoleMessage">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FOnContentsBoundsChange">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnContentsBoundsChange">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FOnContextMenuCommand">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnContextMenuCommand">
 </object>
@@ -40439,6 +40855,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnGetRootScreenRect">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FOnGetRootWindowScreenRect">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnGetRootWindowScreenRect">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FOnGetScreenInfo">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnGetScreenInfo">
 </object>
@@ -40549,6 +40969,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FOnPopupSize">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnPopupSize">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FOnPreferenceChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnPreferenceChanged">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FOnPrefsAvailable">
@@ -40679,6 +41103,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnSetFocus">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FOnSettingChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnSettingChanged">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FOnShowPermissionPrompt">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FOnShowPermissionPrompt">
 </object>
@@ -40741,6 +41169,14 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FPDFPrintOptions">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FPDFPrintOptions">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FPreferenceInfoCS">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FPreferenceInfoCS">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FPreferenceInfoList">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FPreferenceInfoList">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FPrefsFileName">
@@ -40819,8 +41255,20 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FSafeSearch">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="FSearchSuggestEnabled">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FSearchSuggestEnabled">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="FSendReferrer">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FSendReferrer">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FSettingObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FSettingObserver">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FSettingObserverReg">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FSettingObserverReg">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FSpellCheckerDicts">
@@ -40841,6 +41289,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FUpdatePreferences">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FUpdatePreferences">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="FURLDataCollection">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#FURLDataCollection">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="FWebRTCIPHandlingPolicy">
@@ -41385,6 +41837,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#MustCreateResourceRequestHandler">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="MustCreateSettingObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#MustCreateSettingObserver">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="NotifyCurrentRoutes">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#NotifyCurrentRoutes">
 </object>
@@ -41515,6 +41971,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnConsoleMessage">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnConsoleMessage">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnContentsBoundsChange">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnContentsBoundsChange">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnContextMenuCommand">
@@ -41677,6 +42137,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnGetRootScreenRect">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="OnGetRootWindowScreenRect">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnGetRootWindowScreenRect">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnGetScreenInfo">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnGetScreenInfo">
 </object>
@@ -41789,6 +42253,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnPopupSize">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="OnPreferenceChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnPreferenceChanged">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnPrefsAvailable">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnPrefsAvailable">
 </object>
@@ -41895,6 +42363,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnSetFocus">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnSetFocus">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnSettingChanged">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#OnSettingChanged">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnShowPermissionPrompt">
@@ -42037,6 +42509,10 @@
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RemoveBrowser-ICefBrowser-">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="RemovePreferenceObserver">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RemovePreferenceObserver-ustring-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="RenderCompWndProc">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RenderCompWndProc-TMessage-">
 </object>
@@ -42098,30 +42574,30 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="RetrieveHTML">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveHTML-ICefFrame-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveHTML-ustring-ustring-">
 </object>
 <ul>
-<li><object type="text/sitemap">
-<param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveHTML-ICefFrame-">
-</object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveHTML-ustring-ustring-">
 </object>
+<li><object type="text/sitemap">
+<param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveHTML-ICefFrame-">
+</object>
 </ul>
 <li><object type="text/sitemap">
 <param name="Name" value="RetrieveText">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ustring-ustring-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ICefFrame-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ustring-ustring-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ICefFrame-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ICefFrame-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#RetrieveText-ustring-ustring-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -42135,6 +42611,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="SavePreferences">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#SavePreferences-string-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="SearchSuggestEnabled">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#SearchSuggestEnabled">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SelectAll">
@@ -42480,13 +42960,9 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="UpdatePreference">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-boolean-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-double-">
 </object>
 <ul>
-<li><object type="text/sitemap">
-<param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-boolean-">
-</object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-double-">
@@ -42497,11 +42973,15 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-integer-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-TStringList-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
-<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-TStringList-">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-boolean-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TChromiumCore - uCEFChromiumCore Unit">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdatePreference-ICefBrowser-ustring-integer-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -42515,6 +42995,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="UpdateStringListPref">
 <param name="Local" value="uCEFChromiumCore.TChromiumCore.html#UpdateStringListPref-ICefBrowser-ustring-ustring-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="URLDataCollection">
+<param name="Local" value="uCEFChromiumCore.TChromiumCore.html#URLDataCollection">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="VisibleNavigationEntry">
@@ -43143,6 +43627,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="FEvents">
 <param name="Local" value="uCEFBrowserViewDelegate.TCustomBrowserViewDelegate.html#FEvents">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnAllowMoveForPictureInPicture">
+<param name="Local" value="uCEFBrowserViewDelegate.TCustomBrowserViewDelegate.html#OnAllowMoveForPictureInPicture-ICefBrowserView-boolean-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnBlur">
@@ -43785,6 +44273,10 @@
 <param name="Local" value="uCEFDisplayHandler.TCustomDisplayHandler.html#FEvents">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="GetRootWindowScreenRect">
+<param name="Local" value="uCEFDisplayHandler.TCustomDisplayHandler.html#GetRootWindowScreenRect-ICefBrowser-PCefRect-">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="OnAddressChange">
 <param name="Local" value="uCEFDisplayHandler.TCustomDisplayHandler.html#OnAddressChange-ICefBrowser-ICefFrame-ustring-">
 </object>
@@ -43795,6 +44287,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="OnConsoleMessage">
 <param name="Local" value="uCEFDisplayHandler.TCustomDisplayHandler.html#OnConsoleMessage-ICefBrowser-TCefLogSeverity-ustring-ustring-Integer-">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="OnContentsBoundsChange">
+<param name="Local" value="uCEFDisplayHandler.TCustomDisplayHandler.html#OnContentsBoundsChange-ICefBrowser-PCefRect-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="OnCursorChange">
@@ -45062,16 +45558,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="CreateBrowser">
-<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
+<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TEmbeddedChromium - uCEFBrowserWindow Unit">
-<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
+<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TEmbeddedChromium - uCEFBrowserWindow Unit">
-<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-ustring-TCEFBrowserViewComponent-ICefRequestContext-ICefDictionaryValue-">
+<param name="Local" value="uCEFBrowserWindow.TEmbeddedChromium.html#CreateBrowser-TCefWindowHandle-TRect-ustring-ICefRequestContext-ICefDictionaryValue-boolean-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TEmbeddedChromium - uCEFBrowserWindow Unit">
@@ -45200,16 +45696,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="ClientToScreen">
-<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPoint-">
+<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPointF-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TFMXBufferPanel - uCEFFMXBufferPanel Unit">
-<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPoint-">
+<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPointF-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TFMXBufferPanel - uCEFFMXBufferPanel Unit">
-<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPointF-">
+<param name="Local" value="uCEFFMXBufferPanel.TFMXBufferPanel.html#ClientToScreen-TPoint-">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -45520,7 +46016,7 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="Reparent">
-<param name="Local" value="uCEFFMXWindowParent.TFMXWindowParent.html#Reparent-TFmxHandle-">
+<param name="Local" value="uCEFFMXWindowParent.TFMXWindowParent.html#Reparent-TFmxHandle-NativeInt-const-const-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="SetBounds">
@@ -45922,16 +46418,16 @@
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="Create">
-<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create">
+<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create-TOLEFormatArray-integer-integer-">
 </object>
 <ul>
 <li><object type="text/sitemap">
 <param name="Name" value="TOLEEnumFormatEtc - uCEFOLEDragAndDrop Unit">
-<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create">
+<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create-TOLEFormatArray-integer-integer-">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TOLEEnumFormatEtc - uCEFOLEDragAndDrop Unit">
-<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create-TOLEFormatArray-integer-integer-">
+<param name="Local" value="uCEFOLEDragAndDrop.TOLEEnumFormatEtc.html#Create">
 </object>
 </ul>
 <li><object type="text/sitemap">
@@ -46001,6 +46497,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TOnAllowEvent">
 <param name="Local" value="uCEFTimerWorkScheduler.html#TOnAllowEvent">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TOnAllowMoveForPictureInPictureEvent">
+<param name="Local" value="uCEFViewsFrameworkEvents.html#TOnAllowMoveForPictureInPictureEvent">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TOnAlreadyRunningAppRelaunchEvent">
@@ -46165,6 +46665,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TOnConsoleMessage">
 <param name="Local" value="uCEFChromiumEvents.html#TOnConsoleMessage">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TOnContentsBoundsChange">
+<param name="Local" value="uCEFChromiumEvents.html#TOnContentsBoundsChange">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TOnContextCreatedEvent">
@@ -46437,6 +46941,10 @@
 <param name="Local" value="uCEFChromiumEvents.html#TOnGetRootScreenRect">
 </object>
 <li><object type="text/sitemap">
+<param name="Name" value="TOnGetRootWindowScreenRect">
+<param name="Local" value="uCEFChromiumEvents.html#TOnGetRootWindowScreenRect">
+</object>
+<li><object type="text/sitemap">
 <param name="Name" value="TOnGetScreenInfo">
 <param name="Local" value="uCEFChromiumEvents.html#TOnGetScreenInfo">
 </object>
@@ -46599,6 +47107,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TOnPopupSize">
 <param name="Local" value="uCEFChromiumEvents.html#TOnPopupSize">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TOnPreferenceChangedEvent">
+<param name="Local" value="uCEFChromiumEvents.html#TOnPreferenceChangedEvent">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TOnPrefsAvailableEvent">
@@ -46767,6 +47279,10 @@
 <li><object type="text/sitemap">
 <param name="Name" value="TOnSetFocus">
 <param name="Local" value="uCEFChromiumEvents.html#TOnSetFocus">
+</object>
+<li><object type="text/sitemap">
+<param name="Name" value="TOnSettingChangedEvent">
+<param name="Local" value="uCEFChromiumEvents.html#TOnSettingChangedEvent">
 </object>
 <li><object type="text/sitemap">
 <param name="Name" value="TOnShowPermissionPromptEvent">

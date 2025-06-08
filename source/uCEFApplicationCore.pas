@@ -59,6 +59,8 @@ const
   LIBCEF_LOCALE_ENUS = 'en-US.pak';
 
 type
+  TCEFProxySettings = class;
+
   /// <summary>
   ///  Parent class of TCefApplication used to simplify the CEF initialization and destruction.
   /// </summary>
@@ -161,6 +163,11 @@ type
       FDisableHangMonitor                : boolean;
       FHideCrashRestoreBubble            : boolean;
       FPostQuantumKyber                  : TCefState;
+      FProxySettings                     : TCEFProxySettings;
+      {$IFDEF LINUX}
+      FPasswordStorage                   : TCefPasswordStorage;
+      FGTKVersion                        : TCefGTKVersion;
+      {$ENDIF}
 
 
       // Fields used during the CEF initialization
@@ -262,7 +269,6 @@ type
       function  GetTotalSystemMemory : uint64;
       function  GetAvailableSystemMemory : uint64;
       function  GetSystemMemoryLoad : cardinal;
-      function  GetApiHashUniversal : ustring;
       function  GetApiHashPlatform : ustring;
       function  GetApiHashCommit : ustring;
       function  GetApiVersion : integer;
@@ -485,31 +491,23 @@ type
       /// </summary>
       procedure   RemoveComponentID(aComponentID : integer);
       /// <summary>
-      /// DumpWithoutCrashing allows for generating crash dumps with a throttling
+      /// <para>This function allows for generating of crash dumps with a throttling
       /// mechanism, preventing frequent dumps from being generated in a short period
-      /// of time from the same location. The |function_name|, |file_name|, and
-      /// |line_number| determine the location of the dump. The
+      /// of time from the same location. If should only be called after CefInitialize
+      /// has been successfully called. The |function_name|, |file_name|, and
+      /// |line_number| parameters specify the origin location of the dump. The
       /// |mseconds_between_dumps| is an interval between consecutive dumps in
-      /// milliseconds from the same location.
+      /// milliseconds from the same location.</para>
+      /// <para>For detailed behavior, usage instructions, and considerations, refer to the
+      /// documentation of DumpWithoutCrashing in base/debug/dump_without_crashing.h.</para>
       /// </summary>
       /// <returns>
-      /// Returns true if the dump was successfully generated, false otherwise
+      /// Returns true if the dump was successfully generated, false otherwise.
       /// </returns>
       /// <remarks>
       /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/base/cef_dump_without_crashing.h">CEF source file: /include/base/cef_dump_without_crashing.h (CefDumpWithoutCrashing)</see></para>
       /// </remarks>
       function    DumpWithoutCrashing(mseconds_between_dumps: int64; const function_name, file_name: ustring; line_number: integer): boolean;
-      /// <summary>
-      /// DumpWithoutCrashingUnthrottled allows for immediate crash dumping without
-      /// any throttling constraints.
-      /// </summary>
-      /// <returns>
-      /// Returns true if the dump was successfully generated, false otherwise
-      /// </returns>
-      /// <remarks>
-      /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/base/cef_dump_without_crashing.h">CEF source file: /include/base/cef_dump_without_crashing.h (CefDumpWithoutCrashingUnthrottled)</see></para>
-      /// </remarks>
-      function    DumpWithoutCrashingUnthrottled : boolean;
       /// <summary>
       /// Returns CEF version information for the libcef library.
       /// </summary>
@@ -1324,6 +1322,37 @@ type
       /// </summary>
       property TLS13HybridizedKyberSupport       : TCefState                                read FPostQuantumKyber                  write FPostQuantumKyber;
       /// <summary>
+      /// Configure all the browsers to use a proxy server.
+      /// </summary>
+      /// <remarks>
+      /// <para>If you use the proxy settings in GlobalCEFApp you will not be able to use the proxy properties in TChromiumCore.</para>
+      /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --no-proxy-server</see></para>
+      /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-auto-detect</see></para>
+      /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-bypass-list</see></para>
+      /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-pac-url</see></para>
+      /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-server</see></para>
+      /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+      /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+      /// </remarks>
+      property ProxySettings                     : TCEFProxySettings                        read FProxySettings;
+      {$IFDEF LINUX}
+      /// <summary>
+      /// Specifies which encryption storage backend to use in Linux.
+      /// </summary>
+      /// <remarks>
+      /// <para><see href="https://source.chromium.org/chromium/chromium/src/+/main:docs/linux/password_storage.md">Chromium document: docs/linux/password_storage.md</see></para>
+      /// </remarks>
+      property PasswordStorage                   : TCefPasswordStorage                      read FPasswordStorage                   write FPasswordStorage;
+      /// <summary>
+      /// Preferred GTK version loaded by Chromium.
+      /// </summary>
+      /// <remarks>
+      /// <para><see href="https://github.com/chromium/chromium/blob/main/ui/gtk/gtk_compat.cc">See the LoadGtkImpl function in ui/gtk/gtk_compat.cc</see></para>
+      /// </remarks>
+      property GTKVersion                        : TCefGTKVersion                           read FGTKVersion                        write FGTKVersion;
+      {$ENDIF}
+      /// <summary>
       /// Ignores certificate-related errors.
       /// </summary>
       /// <remarks>
@@ -1488,10 +1517,6 @@ type
       /// Memory load in Windows.
       /// </summary>
       property SystemMemoryLoad                  : cardinal                                 read GetSystemMemoryLoad;
-      /// <summary>
-      /// Calls cef_api_hash to get the universal hash.
-      /// </summary>
-      property ApiHashUniversal                  : ustring                                  read GetApiHashUniversal;
       /// <summary>
       /// Calls cef_api_hash to get the platform hash.
       /// </summary>
@@ -1837,6 +1862,40 @@ type
       constructor Create(const aDirectory : string);
   end;
 
+  /// <summary>
+  /// Class used by the TWVLoader.ProxySettigns property to configure
+  /// a custom proxy server using the following command line switches:
+  /// --no-proxy-server, --proxy-auto-detect, --proxy-bypass-list,
+  /// --proxy-pac-url and --proxy-server.
+  /// </summary>
+  /// <remarks>
+  /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --no-proxy-server</see></para>
+  /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-auto-detect</see></para>
+  /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-bypass-list</see></para>
+  /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-pac-url</see></para>
+  /// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --proxy-server</see></para>
+  /// <para><see href="https://www.chromium.org/developers/design-documents/network-settings/">See the Network Settings article.</see></para>
+  /// <para><see href="https://github.com/chromium/chromium/blob/main/net/docs/proxy.md"/">See the Proxy Support article.</see></para>
+  /// <para><see href="https://developer.chrome.com/docs/extensions/reference/api/proxy">See the chrome.proxy API article.</see></para>
+  /// </remarks>
+  TCEFProxySettings = class
+    protected
+      FNoProxyServer : boolean;
+      FAutoDetect    : boolean;
+      FByPassList    : ustring;
+      FPacUrl        : ustring;
+      FServer        : ustring;
+
+    public
+      constructor Create;
+
+      property NoProxyServer : boolean   read FNoProxyServer  write FNoProxyServer;
+      property AutoDetect    : boolean   read FAutoDetect     write FAutoDetect;
+      property ByPassList    : ustring   read FByPassList     write FByPassList;
+      property PacUrl        : ustring   read FPacUrl         write FPacUrl;
+      property Server        : ustring   read FServer         write FServer;
+  end;
+
 var
   GlobalCEFApp : TCefApplicationCore = nil;
 
@@ -1933,9 +1992,7 @@ begin
   FCookieableSchemesExcludeDefaults  := False;
   FChromePolicyId                    := '';
   FChromeAppIconId                   := 0;
-  {$IF DEFINED(OS_POSIX) AND NOT(DEFINED(ANDROID))}
   FDisableSignalHandlers             := False;
-  {$IFEND}
 
   // Fields used to set command line switches
   FSingleProcess                     := False;
@@ -2002,6 +2059,11 @@ begin
   FDisableHangMonitor                := False;
   FHideCrashRestoreBubble            := True;
   FPostQuantumKyber                  := STATE_DEFAULT;
+  FProxySettings                     := nil;
+  {$IFDEF LINUX}
+  FPasswordStorage                   := psDefault;
+  FGTKVersion                        := gtkVersionDefault;
+  {$ENDIF}
 
   // Fields used during the CEF initialization
   FWindowsSandboxInfo                := nil;
@@ -2116,6 +2178,7 @@ begin
     if (FCustomCommandLines      <> nil) then FreeAndNil(FCustomCommandLines);
     if (FCustomCommandLineValues <> nil) then FreeAndNil(FCustomCommandLineValues);
     if (FComponentIDList         <> nil) then FreeAndNil(FComponentIDList);
+    if (FProxySettings           <> nil) then FreeAndNil(FProxySettings);
   finally
     inherited Destroy;
   end;
@@ -2343,6 +2406,7 @@ procedure TCefApplicationCore.AfterConstruction;
 begin
   inherited AfterConstruction;
 
+  FProxySettings           := TCEFProxySettings.Create;
   FCustomCommandLines      := TStringList.Create;
   FCustomCommandLineValues := TStringList.Create;
   FComponentIDList         := TCEFComponentIDList.Create;
@@ -2885,12 +2949,6 @@ begin
       TempFileName     := AnsiString(file_name);
       Result           := (cef_dump_without_crashing(mseconds_between_dumps, @TempFunctionName[1], @TempFileName[1], line_number) <> 0);
     end;
-end;
-
-function TCefApplicationCore.DumpWithoutCrashingUnthrottled : boolean;
-begin
-  Result := (FStatus = asInitialized) and
-            (cef_dump_without_crashing_unthrottled() <> 0);
 end;
 
 function TCefApplicationCore.GetCEFVersionInfo(var aCEFVersionInfo : TCefVersionInfo) : boolean;
@@ -3683,6 +3741,21 @@ begin
     STATE_DISABLED : ReplaceSwitch(aKeys, aValues, '--disable-features', 'PostQuantumKyber');
   end;
 
+  {$IFDEF LINUX}
+  case FPasswordStorage of
+    psGnomeLibsecret : ReplaceSwitch(aKeys, aValues, '--password-store', 'gnome-libsecret');
+    psKWallet        : ReplaceSwitch(aKeys, aValues, '--password-store', 'kwallet');
+    psKWallet5       : ReplaceSwitch(aKeys, aValues, '--password-store', 'kwallet5');
+    psKWallet6       : ReplaceSwitch(aKeys, aValues, '--password-store', 'kwallet6');
+    psBasic          : ReplaceSwitch(aKeys, aValues, '--password-store', 'basic');
+  end;
+
+  case FGTKVersion of
+    gtkVersion3      : ReplaceSwitch(aKeys, aValues, '--gtk-version', '3');       
+    gtkVersion4      : ReplaceSwitch(aKeys, aValues, '--gtk-version', '4');
+  end;
+  {$ENDIF}
+
   // The list of features you can enable is here :
   // https://chromium.googlesource.com/chromium/src/+/master/chrome/common/chrome_features.cc
   // https://source.chromium.org/chromium/chromium/src/+/main:content/public/common/content_features.cc
@@ -3723,6 +3796,23 @@ begin
   // https://source.chromium.org/chromium/chromium/src/+/master:components/variations/variations_switches.cc
   if (length(FForceFieldTrialParams) > 0) then
     ReplaceSwitch(aKeys, aValues, '--force-fieldtrial-params', FForceFieldTrialParams);
+
+  if FProxySettings.NoProxyServer then
+    ReplaceSwitch(aKeys, aValues, '--no-proxy-server')
+   else
+    begin
+      if FProxySettings.AutoDetect then
+        ReplaceSwitch(aKeys, aValues, '--proxy-auto-detect');
+
+      if (length(FProxySettings.ByPassList) > 0) then
+        ReplaceSwitch(aKeys, aValues, '--proxy-bypass-list', FProxySettings.ByPassList);
+
+      if (length(FProxySettings.PacUrl) > 0) then
+        ReplaceSwitch(aKeys, aValues, '--proxy-pac-url', FProxySettings.PacUrl);
+
+      if (length(FProxySettings.Server) > 0) then
+        ReplaceSwitch(aKeys, aValues, '--proxy-server', FProxySettings.Server);
+    end;
 
   if (FCustomCommandLines       <> nil) and
      (FCustomCommandLineValues  <> nil) and
@@ -3928,19 +4018,6 @@ begin
   if GetGlobalMemoryStatusEx(@TempMemStatus) then
     Result := TempMemStatus.dwMemoryLoad;
   {$ENDIF}
-end;
-
-function TCefApplicationCore.GetApiHashUniversal : ustring;
-var
-  TempHash : PAnsiChar;
-begin
-  Result := '';
-  if not(FLibLoaded) then exit;
-
-  TempHash := cef_api_hash(CEF_API_VERSION, CEF_API_HASH_UNIVERSAL);
-
-  if (TempHash <> nil) then
-    Result := ustring(AnsiString(TempHash));
 end;
 
 function TCefApplicationCore.GetApiHashPlatform : ustring;
@@ -4260,11 +4337,9 @@ end;
 
 function TCefApplicationCore.Load_cef_dump_without_crashing_internal_h : boolean;
 begin
-  {$IFDEF FPC}Pointer({$ENDIF}cef_dump_without_crashing{$IFDEF FPC}){$ENDIF}             := GetProcAddress(FLibHandle, 'cef_dump_without_crashing');
-  {$IFDEF FPC}Pointer({$ENDIF}cef_dump_without_crashing_unthrottled{$IFDEF FPC}){$ENDIF} := GetProcAddress(FLibHandle, 'cef_dump_without_crashing_unthrottled');
+  {$IFDEF FPC}Pointer({$ENDIF}cef_dump_without_crashing{$IFDEF FPC}){$ENDIF} := GetProcAddress(FLibHandle, 'cef_dump_without_crashing');
 
-  Result := assigned(cef_dump_without_crashing) and
-            assigned(cef_dump_without_crashing_unthrottled);
+  Result := assigned(cef_dump_without_crashing);
 end;
 
 function TCefApplicationCore.Load_cef_file_util_capi_h : boolean;
@@ -4369,9 +4444,13 @@ end;
 
 function TCefApplicationCore.Load_cef_preference_capi_h : boolean;
 begin
-  {$IFDEF FPC}Pointer({$ENDIF}cef_preference_manager_get_global{$IFDEF FPC}){$ENDIF} := GetProcAddress(FLibHandle, 'cef_preference_manager_get_global');
+  {$IFDEF FPC}Pointer({$ENDIF}cef_preference_manager_get_global{$IFDEF FPC}){$ENDIF}                        := GetProcAddress(FLibHandle, 'cef_preference_manager_get_global');
+  {$IFDEF FPC}Pointer({$ENDIF}cef_preference_manager_get_chrome_variations_as_switches{$IFDEF FPC}){$ENDIF} := GetProcAddress(FLibHandle, 'cef_preference_manager_get_chrome_variations_as_switches');
+  {$IFDEF FPC}Pointer({$ENDIF}cef_preference_manager_get_chrome_variations_as_strings{$IFDEF FPC}){$ENDIF}  := GetProcAddress(FLibHandle, 'cef_preference_manager_get_chrome_variations_as_strings');
 
-  Result := assigned(cef_preference_manager_get_global);
+  Result := assigned(cef_preference_manager_get_global) and
+            assigned(cef_preference_manager_get_chrome_variations_as_switches) and
+            assigned(cef_preference_manager_get_chrome_variations_as_strings);
 end;
 
 function TCefApplicationCore.Load_cef_print_settings_capi_h : boolean;
@@ -4893,6 +4972,20 @@ begin
     on e : exception do
       if CustomExceptionHandler('TCEFDirectoryDeleterThread.Execute', e) then raise;
   end;
+end;
+
+
+// TCEFProxySettings
+
+constructor TCEFProxySettings.Create;
+begin
+  inherited Create;
+
+  FNoProxyServer := False;
+  FAutoDetect    := False;
+  FByPassList    := '';
+  FPacUrl        := '';
+  FServer        := '';
 end;
 
 end.

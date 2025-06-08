@@ -59,6 +59,8 @@ type
   TOnLoadingProgressChange        = procedure(Sender: TObject; const browser: ICefBrowser; const progress: double) of object;
   TOnCursorChange                 = procedure(Sender: TObject; const browser: ICefBrowser; cursor_: TCefCursorHandle; cursorType: TCefCursorType; const customCursorInfo: PCefCursorInfo; var aResult : boolean) of Object;
   TOnMediaAccessChange            = procedure(Sender: TObject; const browser: ICefBrowser; has_video_access, has_audio_access: boolean) of Object;
+  TOnContentsBoundsChange         = procedure(Sender: TObject; const browser: ICefBrowser; const new_bounds: PCefRect; var aResult : boolean) of Object;
+  TOnGetRootWindowScreenRect      = procedure(Sender: TObject; const browser: ICefBrowser; rect_: PCefRect; var aResult : boolean) of Object;
 
   // ICefDownloadHandler
   TOnCanDownloadEvent             = procedure(Sender: TObject; const browser: ICefBrowser; const url, request_method: ustring; var aResult: boolean) of object;
@@ -187,6 +189,12 @@ type
   TOnRequestMediaAccessPermissionEvent = procedure(Sender: TObject; const browser: ICefBrowser; const frame: ICefFrame; const requesting_origin: ustring; requested_permissions: cardinal; const callback: ICefMediaAccessCallback; var aResult: boolean) of object;
   TOnShowPermissionPromptEvent         = procedure(Sender: TObject; const browser: ICefBrowser; prompt_id: uint64; const requesting_origin: ustring; requested_permissions: cardinal; const callback: ICefPermissionPromptCallback; var aResult: boolean) of object;
   TOnDismissPermissionPromptEvent      = procedure(Sender: TObject; const browser: ICefBrowser; prompt_id: uint64; result: TCefPermissionRequestResult) of object;
+
+  // ICefPreferenceObserver
+  TOnPreferenceChangedEvent            = procedure(Sender: TObject; const name_: ustring) of object;
+
+  // ICefSettingObserver
+  TOnSettingChangedEvent               = procedure(Sender: TObject; const requesting_url, top_level_url : ustring; content_type: TCefContentSettingTypes) of object;
 
   // Custom
   TOnTextResultAvailableEvent              = procedure(Sender: TObject; const aText : ustring) of object;

@@ -8,10 +8,10 @@ uses
   {$IFDEF DELPHI16_UP}
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
   System.SyncObjs, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls, Vcl.AppEvnts, WinApi.imm, Vcl.ComCtrls,
+  Vcl.ExtCtrls, Vcl.AppEvnts, WinApi.imm, Vcl.ComCtrls, System.UITypes,
   {$ELSE}
   Windows, Messages, SysUtils, Variants, Classes, SyncObjs,
-  Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, AppEvnts, ComCtrls,
+  Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls, AppEvnts, ComCtrls, UITypes,
   {$ENDIF}
   uCEFChromium, uCEFTypes, uCEFInterfaces, uCEFConstants, uCEFBufferPanel,
   uCEFChromiumCore;
@@ -19,7 +19,8 @@ uses
 const
   // Set this constant to True and load "file://transparency.html" to test a
   // transparent browser.
-  TRANSPARENT_BROWSER = False;
+  TRANSPARENT_BROWSER      = False;
+  CEFBROWSER_SHOWJSDIALOG  = WM_APP + $A10;
 
 type
   TForm1 = class(TForm)
@@ -755,9 +756,9 @@ procedure TForm1.FormDestroy(Sender: TObject);
 begin
   chrmosr.ShutdownDragAndDrop;
 
-  if (FPopUpBitmap <> nil) then FreeAndNil(FPopUpBitmap);
-  if (FResizeCS    <> nil) then FreeAndNil(FResizeCS);
-  if (FIMECS       <> nil) then FreeAndNil(FIMECS);
+  if (FPopUpBitmap    <> nil) then FreeAndNil(FPopUpBitmap);
+  if (FResizeCS       <> nil) then FreeAndNil(FResizeCS);
+  if (FIMECS          <> nil) then FreeAndNil(FIMECS);
 
   if (FDeviceBounds <> nil) then
     begin

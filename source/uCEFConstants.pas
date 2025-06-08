@@ -290,6 +290,14 @@ const
   /// </remarks>
   ERR_NETWORK_ACCESS_REVOKED                                  = -33;
   /// <summary>
+  /// The request was blocked by fingerprinting protections.
+  /// </summary>
+  /// <remarks>
+  /// <para>TCefErrorCode value.</para>
+  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
+  /// </remarks>
+  ERR_BLOCKED_BY_FINGERPRINTING_PROTECTION                    = -34;
+  /// <summary>
   /// A connection was closed (corresponding to a TCP FIN).
   /// </summary>
   /// <remarks>
@@ -1100,15 +1108,6 @@ const
   /// </remarks>
   ERR_CERTIFICATE_TRANSPARENCY_REQUIRED                       = -214;
   /// <summary>
-  /// The certificate chained to a legacy Symantec root that is no longer trusted.
-  /// https://g.co/chrome/symantecpkicerts
-  /// </summary>
-  /// <remarks>
-  /// <para>TCefErrorCode value.</para>
-  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
-  /// </remarks>
-  ERR_CERT_SYMANTEC_LEGACY                                    = -215;
-  /// <summary>
   /// The certificate is known to be used for interception by an entity other
   /// the device owner.
   /// </summary>
@@ -1118,13 +1117,24 @@ const
   /// </remarks>
   ERR_CERT_KNOWN_INTERCEPTION_BLOCKED                         = -217;
   /// <summary>
+  /// -218 was SSL_OBSOLETE_VERSION which is not longer used. TLS 1.0/1.1 instead
+  /// cause SSL_VERSION_OR_CIPHER_MISMATCH now.
+  /// The certificate is self signed and it's being used for either an RFC1918 IP
+  /// literal URL, or a url ending in .local.
+  /// </summary>
+  /// <remarks>
+  /// <para>TCefErrorCode value.</para>
+  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
+  /// </remarks>
+  ERR_CERT_SELF_SIGNED_LOCAL_NETWORK                          = -219;
+  /// <summary>
   /// The value immediately past the last certificate error code.
   /// </summary>
   /// <remarks>
   /// <para>TCefErrorCode value.</para>
   /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
   /// </remarks>
-  ERR_CERT_END                                                = -219;
+  ERR_CERT_END                                                = -220;
   /// <summary>
   /// The URL is invalid.
   /// </summary>
@@ -1552,6 +1562,14 @@ const
   /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
   /// </remarks>
   ERR_PAC_SCRIPT_TERMINATED                                   = -367;
+  /// <summary>
+  /// Signals that the request requires the IPP proxy.
+  /// </summary>
+  /// <remarks>
+  /// <para>TCefErrorCode value.</para>
+  /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_errorcode_t)</see></para>
+  /// </remarks>
+  ERR_PROXY_REQUIRED                                          = -368;
   /// <summary>
   /// The server was expected to return an HTTP/1.x response, but did not. Rather
   /// than treat it as HTTP/0.9, this error is returned.
@@ -2153,6 +2171,7 @@ const
   IDC_RESTORE_WINDOW = 34052;
   IDC_OPEN_IN_PWA_WINDOW = 34053;
   IDC_MOVE_TAB_TO_NEW_WINDOW = 34054;
+  IDC_NEW_SPLIT_TAB = 34055;
   IDC_COPY_URL = 34060;
   IDC_OPEN_IN_CHROME = 34061;
   IDC_WEB_APP_SETTINGS = 34062;
@@ -2161,6 +2180,11 @@ const
   IDC_VISIT_DESKTOP_OF_LRU_USER_3 = 34081;
   IDC_VISIT_DESKTOP_OF_LRU_USER_4 = 34082;
   IDC_VISIT_DESKTOP_OF_LRU_USER_5 = 34083;
+  IDC_ADD_NEW_TAB_TO_GROUP = 34100;
+  IDC_CREATE_NEW_TAB_GROUP = 34101;
+  IDC_FOCUS_NEXT_TAB_GROUP = 34102;
+  IDC_FOCUS_PREV_TAB_GROUP = 34103;
+  IDC_CLOSE_TAB_GROUP = 34104;
   IDC_BOOKMARK_THIS_TAB = 35000;
   IDC_BOOKMARK_ALL_TABS = 35001;
   IDC_VIEW_SOURCE = 35002;
@@ -2198,8 +2222,8 @@ const
   IDC_SHOW_PAYMENT_METHODS = 35042;
   IDC_SHOW_ADDRESSES = 35043;
   IDC_ORGANIZE_TABS = 35044;
-  IDC_CREATE_NEW_TAB_GROUP = 35045;
-  IDC_DECLUTTER_TABS = 35046;
+  IDC_DECLUTTER_TABS = 35045;
+  IDC_SEND_SHARED_TAB_GROUP_FEEDBACK = 35046;
   IDC_MUTE_TARGET_SITE = 35050;
   IDC_PIN_TARGET_TAB = 35051;
   IDC_GROUP_TARGET_TAB = 35052;
@@ -2319,6 +2343,11 @@ const
   IDC_TASK_MANAGER_MAIN_MENU = 40288;
   IDC_COMPARE_MENU = 40289;
   IDC_SHOW_ALL_COMPARISON_TABLES = 40290;
+  IDC_ADD_TO_COMPARISON_TABLE_MENU = 40291;
+  IDC_CREATE_NEW_COMPARISON_TABLE_WITH_TAB = 40292;
+  IDC_SHOW_HISTORY_SIDE_PANEL = 40293;
+  IDC_OPEN_GLIC = 40294;
+  IDC_FIND_EXTENSIONS = 40295;
   IDC_SPELLCHECK_SUGGESTION_0 = 41000;
   IDC_SPELLCHECK_SUGGESTION_1 = 41001;
   IDC_SPELLCHECK_SUGGESTION_2 = 41002;
@@ -2435,6 +2464,8 @@ const
   IDC_CONTENT_CONTEXT_OPEN_WITH14 = 50213;
   IDC_CONTENT_CONTEXT_EMOJI = 50220;
   IDC_CONTEXT_COMPOSE = 50230;
+  IDC_CONTENT_CONTEXT_CLOSE_GLIC = 50231;
+  IDC_CONTENT_CONTEXT_RELOAD_GLIC = 50232;
   IDC_BOOKMARK_BAR_OPEN_ALL = 51000;
   IDC_BOOKMARK_BAR_OPEN_ALL_NEW_WINDOW = 51001;
   IDC_BOOKMARK_BAR_OPEN_ALL_INCOGNITO = 51002;
@@ -2457,6 +2488,8 @@ const
   IDC_BOOKMARK_BAR_ADD_TO_BOOKMARKS_BAR = 51019;
   IDC_BOOKMARK_BAR_REMOVE_FROM_BOOKMARKS_BAR = 51020;
   IDC_BOOKMARK_BAR_TOGGLE_SHOW_TAB_GROUPS = 51021;
+  IDC_BOOKMARK_BAR_MOVE = 51022;
+  IDC_BOOKMARK_BAR_OPEN_SPLIT_VIEW = 51023;
   IDC_CONTENT_CONTEXT_SHARING_CLICK_TO_CALL_SINGLE_DEVICE = 51030;
   IDC_CONTENT_CONTEXT_SHARING_CLICK_TO_CALL_MULTIPLE_DEVICES = 51031;
   IDC_CONTENT_CONTEXT_SHARING_SHARED_CLIPBOARD_SINGLE_DEVICE = 51032;
@@ -2465,6 +2498,7 @@ const
   IDC_CONTENT_CONTEXT_SHARING_SUBMENU = 51035;
   IDC_CONTENT_PASTE_FROM_CLIPBOARD = 51037;
   IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND = 51100;
+  IDC_STATUS_TRAY_KEEP_CHROME_RUNNING_IN_BACKGROUND_SETTING = 51101;
   IDC_MEDIA_ROUTER_ABOUT = 51200;
   IDC_MEDIA_ROUTER_HELP = 51201;
   IDC_MEDIA_ROUTER_LEARN_MORE = 51202;
@@ -2490,30 +2524,32 @@ const
   IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION4 = 52403;
   IDC_CONTENT_CONTEXT_START_SMART_SELECTION_ACTION5 = 52404;
   IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_TOGGLE = 52410;
-  IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS = 52411;
-  IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_TOGGLE_ONCE = 52412;
-  IDC_CONTENT_CONTEXT_QUICK_ANSWERS_INLINE_ANSWER = 52413;
-  IDC_CONTENT_CONTEXT_QUICK_ANSWERS_INLINE_QUERY = 52414;
-  IDC_TAB_SEARCH = 52500;
-  IDC_TAB_SEARCH_CLOSE = 52501;
-  IDC_DEBUG_TOGGLE_TABLET_MODE = 52510;
-  IDC_DEBUG_PRINT_VIEW_TREE = 52511;
-  IDC_DEBUG_PRINT_VIEW_TREE_DETAILS = 52512;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FEEDBACK = 52990;
-  IDC_CONTENT_CONTEXT_AUTOFILL_PREDICTION_IMPROVEMENTS = 52993;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PLUS_ADDRESS = 52994;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_SELECT_PASSWORD = 52998;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_IMPORT_PASSWORDS = 52999;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_SUGGEST_PASSWORD = 53000;
-  IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_USE_PASSKEY_FROM_ANOTHER_DEVICE = 53002;
-  IDC_LIVE_CAPTION = 53251;
-  IDC_DEVICE_SYSTEM_TRAY_ICON_FIRST = 53260;
-  IDC_DEVICE_SYSTEM_TRAY_ICON_LAST = 53299;
-  IDC_SET_BROWSER_AS_DEFAULT = 53300;
-  IDC_COMPACT_MODE = 53301;
-  IDC_GLIC_STATUS_ICON_MENU_SHOW = 53310;
-  IDC_GLIC_STATUS_ICON_MENU_CUSTOMIZE_KEYBOARD_SHORTCUT = 53311;
-  IDC_GLIC_STATUS_ICON_MENU_SETTINGS = 53312;
+IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS = 52411;
+IDC_CONTENT_CONTEXT_ACCESSIBILITY_LABELS_TOGGLE_ONCE = 52412;
+IDC_CONTENT_CONTEXT_QUICK_ANSWERS_INLINE_ANSWER = 52413;
+IDC_CONTENT_CONTEXT_QUICK_ANSWERS_INLINE_QUERY = 52414;
+IDC_TAB_SEARCH = 52500;
+IDC_TAB_SEARCH_CLOSE = 52501;
+IDC_DEBUG_TOGGLE_TABLET_MODE = 52510;
+IDC_DEBUG_PRINT_VIEW_TREE = 52511;
+IDC_DEBUG_PRINT_VIEW_TREE_DETAILS = 52512;
+IDC_CONTENT_CONTEXT_AUTOFILL_FEEDBACK = 52990;
+IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PLUS_ADDRESS = 52994;
+IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_SELECT_PASSWORD = 52998;
+IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_IMPORT_PASSWORDS = 52999;
+IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_SUGGEST_PASSWORD = 53000;
+IDC_CONTENT_CONTEXT_AUTOFILL_FALLBACK_PASSWORDS_USE_PASSKEY_FROM_ANOTHER_DEVICE = 53002;
+IDC_LIVE_CAPTION = 53251;
+IDC_DEVICE_SYSTEM_TRAY_ICON_FIRST = 53260;
+IDC_DEVICE_SYSTEM_TRAY_ICON_LAST = 53299;
+IDC_SET_BROWSER_AS_DEFAULT = 53300;
+IDC_GLIC_STATUS_ICON_MENU_SHOW = 53310;
+IDC_GLIC_STATUS_ICON_MENU_CUSTOMIZE_KEYBOARD_SHORTCUT = 53311;
+IDC_GLIC_STATUS_ICON_MENU_REMOVE_ICON = 53312;
+IDC_GLIC_STATUS_ICON_MENU_SETTINGS = 53313;
+IDC_GLIC_STATUS_ICON_MENU_EXIT = 53314;
+IDC_GLIC_STATUS_ICON_MENU_CLOSE = 53315;
+IDC_GLIC_TOGGLE_PIN = 53320;
 
 
   /// <summary>
@@ -4007,6 +4043,7 @@ const
   CEF_PERMISSION_TYPE_WEB_APP_INSTALLATION       = 1 shl 22;
   CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT          = 1 shl 23;
   CEF_PERMISSION_TYPE_FILE_SYSTEM_ACCESS         = 1 shl 24;
+  CEF_PERMISSION_TYPE_LOCAL_NETWORK_ACCESS       = 1 shl 25;  {* CEF_API_ADDED(13600) *}
 
 
   /// <summary>
@@ -4018,7 +4055,7 @@ const
   /// </remarks>
   CEF_API_HASH_PLATFORM  = 0;
   /// <summary>
-  /// Universal API hash.
+  /// Universal API hash. (deprecated, same as CEF_API_HASH_PLATFORM)
   /// </summary>
   /// <remarks>
   /// <para>ucef_api_hash parameter.</para>
